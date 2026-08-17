@@ -1,6 +1,6 @@
 import {useEffect,useMemo,useState} from 'react';
 import {ArrowDown,ArrowLeft,ArrowUp,Check,ChevronDown,ChevronUp,ClipboardCheck,Contact,MapPin,Minus,Music2,NotebookPen,Pencil,Plus,RotateCcw,ShoppingBag,Trash2,Zap} from 'lucide-react';
-import jstLogo from './assets/Branding/jst-logo.png.png';
+import jstLogo from './Assets/Branding/jst-logo.png.png';
 import './show-mode.css';
 
 type Song={id:string;title:string;length:string;tuning:string;key:string};

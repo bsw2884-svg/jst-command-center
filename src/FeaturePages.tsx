@@ -1,6 +1,6 @@
 import {useEffect,useMemo,useState} from 'react';
 import {CalendarClock,Check,ChevronDown,ChevronUp,Copy,ExternalLink,FilePlus2,Music2,Plus,Trash2,X} from 'lucide-react';
-import jstLogo from './assets/Branding/jst-logo.png.png';
+import jstLogo from './Assets/Branding/jst-logo.png.png';
 
 export type RehearsalSong={songId:string;focus:string[];status:string;notes:string};
 export type Rehearsal={id:string;date:string;startTime:string;endTime:string;location:string;attendees:string;goals:string[];songs:RehearsalSong[];notes:string;after:{improved:string;needsWork:string;priorities:string;technical:string;gear:string};completed:boolean};
