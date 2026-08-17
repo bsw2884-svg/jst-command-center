@@ -1,5 +1,5 @@
-const VERSION='jst-command-v1';
-const SHELL=['/','/index.html','/manifest.webmanifest','/icons/jst-192.png','/icons/jst-512.png','/icons/jst-maskable-512.png'];
+const VERSION='jst-command-v2';
+const SHELL=['/','/index.html','/manifest.webmanifest','/icons/generated/jst-favicon-48.png','/icons/generated/jst-apple-180.png','/icons/generated/jst-standard-192.png','/icons/generated/jst-standard-512.png','/icons/generated/jst-maskable-512.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(VERSION).then(cache=>cache.addAll(SHELL))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==VERSION).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')self.skipWaiting()});
