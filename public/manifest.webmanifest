@@ -1,0 +1,22 @@
+{
+  "name": "JumpStart Tomorrow Command Center",
+  "short_name": "JST Command",
+  "description": "JumpStart Tomorrow band operations, show planning, releases, rehearsals, and show-day tools.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#090909",
+  "theme_color": "#b5161b",
+  "categories": ["music", "productivity"],
+  "icons": [
+    {"src":"/icons/jst-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"/icons/jst-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"/icons/jst-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+  ],
+  "shortcuts": [
+    {"name":"Shows","short_name":"Shows","url":"/?open=shows","icons":[{"src":"/icons/jst-192.png","sizes":"192x192"}]},
+    {"name":"Show Mode","short_name":"Show Mode","url":"/?open=show-mode","icons":[{"src":"/icons/jst-192.png","sizes":"192x192"}]}
+  ]
+}
