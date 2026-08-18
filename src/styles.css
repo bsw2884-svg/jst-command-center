@@ -272,13 +272,9 @@ main:has(>.dashboardFeatureStrip)>header h1:after{height:6px;background:linear-g
  .tableWrap td:last-child{position:absolute;top:12px;right:10px;width:auto}.tableWrap td:last-child .actions{gap:3px}.tableWrap td:last-child .icon{min-width:34px;min-height:34px;padding:7px}
 }
 
-/* Temporary production build marker for mobile deployment verification. */
-.mobileBuildMarker{display:none}
-
 /* Sub-600px authenticated dashboard polish. Kept last so poster layers cannot override it. */
 @media(max-width:600px){
  .app>main{padding-bottom:calc(118px + env(safe-area-inset-bottom))}
- .mobileBuildMarker{display:block;order:-1;width:100%;max-width:100%;padding:7px 9px;border:2px solid #171313;background:var(--jst-sand);color:#171313;font:900 9px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.035em;text-align:center;overflow-wrap:anywhere}
  .app>main.dashboardMain{padding-top:12px}
  .app>main.dashboardMain>header{display:grid;grid-template-columns:minmax(0,1fr);width:100%;max-width:100%;height:auto;min-height:0;gap:9px;align-items:stretch;margin:0 0 12px;padding:10px 11px}
  .app>main.dashboardMain>header>div:first-of-type{width:100%;min-width:0}
@@ -307,12 +303,9 @@ main:has(>.dashboardFeatureStrip)>header h1:after{height:6px;background:linear-g
  .mobileBottomNav svg{width:19px;height:19px}
 }
 
-/* Final authoritative iPhone Dashboard override. Keep this block last. */
-.iphoneMobileCssBanner{display:none}
+/* Final authoritative iPhone Dashboard override. */
 @media(max-width:650px){
  .app>main.dashboardMain{display:flex!important;flex-direction:column!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding-left:12px!important;padding-right:12px!important;box-sizing:border-box!important;overflow-x:visible!important}
- .app>main.dashboardMain>.iphoneMobileCssBanner{display:block!important;order:-2!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0 0 8px!important;padding:9px 10px!important;box-sizing:border-box!important;border:3px solid #171313!important;background:#fff200!important;color:#171313!important;font:900 clamp(12px,4vw,16px)/1.1 'Barlow Condensed',sans-serif!important;letter-spacing:.08em!important;text-align:center!important}
- .app>main.dashboardMain>.mobileBuildMarker{order:-1!important;width:100%!important;max-width:100%!important;min-width:0!important}
  .app>main.dashboardMain>header{position:relative!important;inset:auto!important;order:0!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;min-height:0!important;margin:0 0 12px!important;padding:10px 11px!important;box-sizing:border-box!important;align-items:stretch!important;overflow:visible!important}
  .app>main.dashboardMain>header>div{width:100%!important;max-width:100%!important;min-width:0!important}
  .app>main.dashboardMain>header h1{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;font-size:clamp(24px,8vw,31px)!important;line-height:1!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
@@ -337,14 +330,13 @@ main:has(>.dashboardFeatureStrip)>header h1:after{height:6px;background:linear-g
 .is-mobile .app>aside{display:none!important;width:0!important;max-width:0!important;margin:0!important;padding:0!important}
 .is-mobile .app>main{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important}
 .is-mobile .app>main.dashboardMain{display:flex!important;flex-direction:column!important;box-sizing:border-box!important;padding:12px 12px calc(118px + env(safe-area-inset-bottom))!important;overflow-x:visible!important}
-.is-mobile .app>main.dashboardMain>.jsMobileModeBanner{display:block!important;order:-3!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0 0 8px!important;padding:10px!important;box-sizing:border-box!important;border:3px solid #171313!important;background:#00ff84!important;color:#171313!important;font:900 clamp(13px,4vw,17px)/1.1 'Barlow Condensed',sans-serif!important;letter-spacing:.08em!important;text-align:center!important}
-.is-mobile .app>main.dashboardMain>.mobileBuildMarker{display:block!important;order:-2!important;width:100%!important;max-width:100%!important;min-width:0!important}
 .is-mobile .app>main.dashboardMain>header{position:relative!important;inset:auto!important;order:0!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;min-height:0!important;margin:0 0 12px!important;padding:10px 11px!important;box-sizing:border-box!important;align-items:stretch!important;gap:9px!important;overflow:visible!important}
 .is-mobile .app>main.dashboardMain>header>div{width:100%!important;max-width:100%!important;min-width:0!important}
 .is-mobile .app>main.dashboardMain>header h1{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;font-size:clamp(23px,8vw,31px)!important;line-height:1!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
 .is-mobile .app>main.dashboardMain>header .headerActions{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important}
 .is-mobile .app>main.dashboardMain>header .showModeBtn{display:flex!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;min-height:44px!important;margin:0!important;padding:10px 12px!important;justify-content:center!important;font-size:clamp(10px,3vw,12px)!important;white-space:nowrap!important;flex:none!important}
 .is-mobile .app>main.dashboardMain>.hero{order:1!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;box-sizing:border-box!important}
+.is-mobile .app>main.dashboardMain>.hero .heroCopy h2{font-size:clamp(24px,7vw,29px)!important;line-height:.95!important}
 .is-mobile .app>main.dashboardMain>.dashGrid{order:2!important;display:grid!important;grid-template-columns:1fr!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;gap:14px!important}
 .is-mobile .app>main.dashboardMain>.dashboardFeatureStrip{order:3!important;display:grid!important;grid-template-columns:1fr!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0 0 14px!important;gap:12px!important}
 .is-mobile .app>main.dashboardMain>.stats{order:4!important;width:100%!important;max-width:100%!important;min-width:0!important;margin-left:0!important;margin-right:0!important}
