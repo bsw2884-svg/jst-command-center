@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JST Viewport Test</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        color: #000;
+      }
+
+      body {
+        padding: 16px;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      h1 {
+        margin: 0 0 16px;
+        font-size: 28px;
+        line-height: 1.1;
+      }
+
+      #values {
+        margin: 0;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        font: 700 18px/1.5 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
+
+      #width-test {
+        display: flex;
+        width: 100%;
+        height: 100px;
+        margin-top: 20px;
+        padding: 12px;
+        align-items: center;
+        justify-content: center;
+        border: 4px solid #900;
+        background: #f00;
+        color: #fff;
+        text-align: center;
+        font: 900 18px/1.2 Arial, Helvetica, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>JST VIEWPORT TEST</h1>
+    <pre id="values">Loading viewport values...</pre>
+    <div id="width-test">THIS SHOULD FILL THE SCREEN WIDTH</div>
+
+    <script>
+      (() => {
+        const output = document.getElementById('values');
+
+        const render = () => {
+          const viewportMeta = document.querySelector('meta[name="viewport"]');
+          output.textContent = [
+            `window.innerWidth: ${window.innerWidth}`,
+            `window.innerHeight: ${window.innerHeight}`,
+            `document.documentElement.clientWidth: ${document.documentElement.clientWidth}`,
+            `document.documentElement.scrollWidth: ${document.documentElement.scrollWidth}`,
+            `visualViewport.width: ${window.visualViewport?.width ?? 'unavailable'}`,
+            `visualViewport.height: ${window.visualViewport?.height ?? 'unavailable'}`,
+            `screen.width: ${window.screen.width}`,
+            `screen.height: ${window.screen.height}`,
+            `devicePixelRatio: ${window.devicePixelRatio}`,
+            `viewport meta: ${viewportMeta?.content ?? 'missing'}`,
+            `(max-width: 600px) matches: ${window.matchMedia('(max-width: 600px)').matches}`,
+          ].join('\n');
+        };
+
+        render();
+        window.addEventListener('resize', render);
+        window.addEventListener('orientationchange', render);
+        window.addEventListener('pageshow', render);
+        window.visualViewport?.addEventListener('resize', render);
+      })();
+    </script>
+  </body>
+</html>
