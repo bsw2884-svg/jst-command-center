@@ -14,6 +14,18 @@ import {mountAppChrome} from './AppNav';
 import DataBackup,{APP_DATA_KEY,LAST_BACKUP_KEY} from './DataBackup';
 import AuthGate,{useJstMemberContext} from './AuthGate';
 import {useCloudOperationalData} from './lib/cloudData';
+import {installIosViewportRecovery} from './lib/viewport';
+
+installIosViewportRecovery();
+
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+ let refreshing=false;
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}});
+ void navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(async registration=>{
+  await registration.update();
+  registration.waiting?.postMessage({type:'SKIP_WAITING'});
+ }).catch(()=>undefined);
+}
 
 type Status='Not Started'|'In Progress'|'Complete';
 type Song={id:string;title:string;bpm:number;key:string;tuning:string;length:string;status:string;notes:string};

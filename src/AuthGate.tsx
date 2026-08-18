@@ -5,6 +5,7 @@ import jstLogo from './Assets/Branding/jst-logo.png.png'
 import { JST_BAND_MEMBERS, type JstBandMemberId } from './lib/bandMembers'
 import { isSupabaseConfigured } from './lib/supabase'
 import { authService, workspaceService, type MemberContext } from './lib/services'
+import { readViewportDiagnostics, viewportDiagnosticsEnabled, type ViewportDiagnostics as ViewportDiagnosticsData } from './lib/viewport'
 import './auth.css'
 
 const messageOf = (cause: unknown, fallback: string) =>
@@ -97,7 +98,30 @@ function AuthFrame({ children }: { children: ReactNode }) {
     <img src={jstLogo} alt="JumpStart Tomorrow"/>
     <span className="authKicker">JST · COMMAND CENTER</span>
     {children}
+    <ViewportDiagnostics/>
   </section></main>
+}
+
+function ViewportDiagnostics() {
+  const enabled = viewportDiagnosticsEnabled()
+  const [diagnostics, setDiagnostics] = useState<ViewportDiagnosticsData | null>(null)
+
+  useEffect(() => {
+    if (!enabled) return
+    const update = () => setDiagnostics(readViewportDiagnostics())
+    update()
+    window.addEventListener('resize', update)
+    window.visualViewport?.addEventListener('resize', update)
+    document.addEventListener('visibilitychange', update)
+    return () => {
+      window.removeEventListener('resize', update)
+      window.visualViewport?.removeEventListener('resize', update)
+      document.removeEventListener('visibilitychange', update)
+    }
+  }, [enabled])
+
+  if (!enabled || !diagnostics) return null
+  return <pre className="viewportDiagnostics">{JSON.stringify(diagnostics, null, 2)}</pre>
 }
 
 function MemberPicker({ error, onError, onConnected }: {
