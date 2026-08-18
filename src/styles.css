@@ -272,9 +272,13 @@ main:has(>.dashboardFeatureStrip)>header h1:after{height:6px;background:linear-g
  .tableWrap td:last-child{position:absolute;top:12px;right:10px;width:auto}.tableWrap td:last-child .actions{gap:3px}.tableWrap td:last-child .icon{min-width:34px;min-height:34px;padding:7px}
 }
 
+/* Temporary production build marker for mobile deployment verification. */
+.mobileBuildMarker{display:none}
+
 /* Sub-600px authenticated dashboard polish. Kept last so poster layers cannot override it. */
 @media(max-width:600px){
  .app>main{padding-bottom:calc(118px + env(safe-area-inset-bottom))}
+ .mobileBuildMarker{display:block;order:-1;width:100%;max-width:100%;padding:7px 9px;border:2px solid #171313;background:var(--jst-sand);color:#171313;font:900 9px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.035em;text-align:center;overflow-wrap:anywhere}
  .app>main.dashboardMain{padding-top:12px}
  .app>main.dashboardMain>header{display:grid;grid-template-columns:minmax(0,1fr);width:100%;max-width:100%;height:auto;min-height:0;gap:9px;align-items:stretch;margin:0 0 12px;padding:10px 11px}
  .app>main.dashboardMain>header>div:first-of-type{width:100%;min-width:0}
