@@ -93,7 +93,7 @@ export default function AuthGate({ children }: { children: ReactNode }) {
 }
 
 function AuthFrame({ children }: { children: ReactNode }) {
-  return <main className="authPage"><section className="authCard memberAuthCard">
+  return <main className="authPage"><div className="authDecorations" aria-hidden="true"/><section className="authCard memberAuthCard authPosterShell">
     <img src={jstLogo} alt="JumpStart Tomorrow"/>
     <span className="authKicker">JST · COMMAND CENTER</span>
     {children}
@@ -123,12 +123,12 @@ function MemberPicker({ error, onError, onConnected }: {
     }
   }
 
-  return <AuthFrame>
+  return <AuthFrame><div className="memberPickerPanel">
     <div className="memberIntro"><h1>WHO ARE YOU?</h1><p>Pick your name to enter the band's private command center.</p></div>
     <div className="memberGrid">{JST_BAND_MEMBERS.map(member => <button key={member.id} disabled={busyMember !== null} onClick={() => choose(member.id)}><UserRound/><b>{member.name.toUpperCase()}</b><span>{busyMember === member.id ? 'GETTING YOU IN…' : 'ENTER COMMAND CENTER'}</span></button>)}</div>
     {error && <p className="authError">{error}</p>}
     <p className="anonymousNote">This device stays signed in. If browser data is cleared, simply choose your name again.</p>
-  </AuthFrame>
+  </div></AuthFrame>
 }
 
 function EmailAuthScreen({ initialError, onBack }: { initialError: string; onBack: () => void }) {

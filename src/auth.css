@@ -53,3 +53,16 @@
 @media(max-width:340px){.memberGrid{grid-template-columns:1fr}}
 
 .viewportDiagnostics{max-width:100%;margin:18px 0 0;padding:12px;overflow-wrap:anywhere;white-space:pre-wrap;border:1px dashed #6b5c56;background:#211d1b;color:#e9dfd4;font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace}
+
+/* Keep the member picker independent from the desktop application shell. */
+.authPage{left:auto;right:auto;margin:0;transform:none;translate:none}
+.authPage:before,.authPage:after{content:none}
+.authDecorations{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.authDecorations:before,.authDecorations:after{content:"";position:absolute;pointer-events:none;filter:contrast(1.15)}
+.authDecorations:before{width:52vw;height:120px;left:-8vw;top:11vh;background:#dfc878;opacity:.72;clip-path:polygon(0 31%,8% 16%,21% 28%,35% 8%,49% 25%,66% 10%,82% 29%,100% 17%,96% 76%,77% 67%,62% 88%,46% 70%,25% 91%,8% 74%);transform:rotate(-5deg)}
+.authDecorations:after{width:46vw;height:105px;right:-7vw;bottom:10vh;background:#8fc7b5;opacity:.75;clip-path:polygon(0 19%,17% 4%,34% 22%,51% 8%,70% 25%,87% 10%,100% 30%,96% 79%,77% 65%,59% 89%,39% 69%,18% 90%,3% 72%);transform:rotate(6deg)}
+.authPosterShell{z-index:1}
+.memberPickerPanel{position:relative;left:auto;right:auto;width:100%;max-width:100%;min-width:0;margin:0;transform:none;translate:none}
+@media(max-width:700px){.authDecorations:before{width:78vw;top:5vh}.authDecorations:after{width:72vw;bottom:4vh}}
+@media(max-width:600px){.authPage{display:block;position:relative;left:auto;right:auto;width:100%;max-width:100%;min-width:0;margin:0;padding:max(17px,env(safe-area-inset-top)) max(17px,env(safe-area-inset-right)) max(17px,env(safe-area-inset-bottom)) max(17px,env(safe-area-inset-left));transform:none;translate:none}.authPosterShell,.authCard,.memberAuthCard,.memberPickerPanel{position:relative;left:auto;right:auto;width:100%;max-width:100%;min-width:0;margin-inline:auto;transform:none;translate:none}.memberGrid{position:relative;left:auto;right:auto;width:100%;max-width:100%;min-width:0;grid-template-columns:repeat(2,minmax(0,1fr));transform:none;translate:none}.memberGrid button,.memberGrid button:hover,.memberGrid button:focus-visible{left:auto;right:auto;width:100%;max-width:100%;min-width:0;transform:none;translate:none}.authDecorations{position:absolute;inset:0;overflow:hidden;pointer-events:none}}
+@media(max-width:340px){.memberGrid{grid-template-columns:1fr}}

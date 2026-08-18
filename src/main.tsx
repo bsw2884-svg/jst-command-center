@@ -14,9 +14,8 @@ import {mountAppChrome} from './AppNav';
 import DataBackup,{APP_DATA_KEY,LAST_BACKUP_KEY} from './DataBackup';
 import AuthGate,{useJstMemberContext} from './AuthGate';
 import {useCloudOperationalData} from './lib/cloudData';
-import {installIosViewportRecovery,installViewportDebugOverlay} from './lib/viewport';
+import {installViewportDebugOverlay} from './lib/viewport';
 
-installIosViewportRecovery();
 installViewportDebugOverlay();
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
