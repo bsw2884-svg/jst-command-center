@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
-import { Cloud, LogOut, UserRound } from 'lucide-react'
+import { Cloud, LogOut, MoreHorizontal, UserRound } from 'lucide-react'
 import jstLogo from './Assets/Branding/jst-logo.png.png'
 import { JST_BAND_MEMBERS, type JstBandMemberId } from './lib/bandMembers'
 import { isSupabaseConfigured } from './lib/supabase'
@@ -81,12 +81,14 @@ export default function AuthGate({ children }: { children: ReactNode }) {
 
   const currentUser = verifiedUser ?? session.user
   const isAnonymous = currentUser.is_anonymous === true
+  const compactSyncStatus = syncStatus.phase === 'synced' ? 'SYNCED' : syncStatus.phase.toUpperCase()
 
   return <JstMemberContext.Provider value={context}><div className="cloudSession" data-member={context.member.slug} data-workspace-role={context.membership.role} data-session-kind={isAnonymous ? 'anonymous' : 'permanent'} data-auth-user-id={currentUser.id} data-membership-user-id={context.membership.user_id} data-email-identity={hasEmailIdentity ? 'linked' : 'none'}>
     <div className="cloudBar">
-      <span><Cloud/> {context.member.display_name} · {context.membership.workspace.name}</span>
-      <em className={`cloudSyncStatus ${syncStatus.phase}`}>{syncStatus.message}</em>
-      <button onClick={signOut}><LogOut/> Switch Member / Sign Out</button>
+      <span className="memberIdentity"><Cloud/> {context.member.display_name} · {context.membership.workspace.name}</span>
+      <em className={`cloudSyncStatus ${syncStatus.phase}`}><span className="syncFull">{syncStatus.message}</span><span className="syncCompact">{compactSyncStatus}</span></em>
+      <button className="switchMemberAction" onClick={signOut}><LogOut/><span className="switchFull">Switch Member / Sign Out</span><span className="switchCompact">Switch Member</span></button>
+      <button className="mobileMoreAction" aria-label="More pages and settings" onClick={()=>window.dispatchEvent(new Event('jst-mobile-more'))}><MoreHorizontal/></button>
     </div>
     {children}
   </div></JstMemberContext.Provider>
