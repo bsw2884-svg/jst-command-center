@@ -350,3 +350,10 @@ main:has(>.dashboardFeatureStrip)>header h1:after{height:6px;background:linear-g
 .is-mobile .app>main.dashboardMain>.dashGrid>.releaseSpotlight{grid-template-columns:1fr!important;min-width:0!important;flex-basis:auto!important}
 .is-mobile .app>main.dashboardMain>.dashGrid>.releaseSpotlight .releaseCover{width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;aspect-ratio:1/1!important}
 .is-mobile .app>main.dashboardMain>.dashGrid>.releaseSpotlight .releaseInfo{width:100%!important;max-width:100%!important;min-width:0!important;padding:18px!important;box-sizing:border-box!important}
+
+/* FINAL JS-driven iPhone bottom navigation. Keep this block at absolute EOF. */
+.is-mobile .mobileBottomNav{position:fixed!important;z-index:80!important;inset:auto 0 0!important;display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;width:100%!important;max-width:100%!important;height:calc(72px + env(safe-area-inset-bottom))!important;margin:0!important;padding:5px 4px env(safe-area-inset-bottom)!important;box-sizing:border-box!important;border-top:1px solid #705652!important;background:#2a2322f7!important;backdrop-filter:blur(18px)}
+.is-mobile .mobileBottomNav button{display:grid!important;min-width:0!important;min-height:54px!important;padding:4px 1px!important;place-items:center!important;align-content:center!important;gap:3px!important;font-size:7px!important;white-space:nowrap!important}
+.is-mobile .mobileBottomNav svg{width:19px!important;height:19px!important}
+.is-mobile .app>main{padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+.is-mobile .app>main.dashboardMain{padding-bottom:calc(118px + env(safe-area-inset-bottom))!important}
