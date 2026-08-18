@@ -1,6 +1,6 @@
 {
   "name": "JumpStart Tomorrow Command Center",
-  "short_name": "Command Center",
+  "short_name": "JST CC",
   "description": "JumpStart Tomorrow band operations, show planning, releases, rehearsals, and show-day tools.",
   "start_url": "/",
   "scope": "/",
