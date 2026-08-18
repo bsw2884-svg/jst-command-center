@@ -85,9 +85,9 @@ export default function AuthGate({ children }: { children: ReactNode }) {
 
   return <JstMemberContext.Provider value={context}><div className="cloudSession" data-member={context.member.slug} data-workspace-role={context.membership.role} data-session-kind={isAnonymous ? 'anonymous' : 'permanent'} data-auth-user-id={currentUser.id} data-membership-user-id={context.membership.user_id} data-email-identity={hasEmailIdentity ? 'linked' : 'none'}>
     <div className="cloudBar">
-      <span className="memberIdentity"><Cloud/> {context.member.display_name} · {context.membership.workspace.name}</span>
-      <em className={`cloudSyncStatus ${syncStatus.phase}`}><span className="syncFull">{syncStatus.message}</span><span className="syncCompact">{compactSyncStatus}</span></em>
-      <button className="switchMemberAction" onClick={signOut}><LogOut/><span className="switchFull">Switch Member / Sign Out</span><span className="switchCompact">Switch Member</span></button>
+      <span className="memberIdentity" data-mobile-label={context.member.display_name}><Cloud/><span>{context.member.display_name} · {context.membership.workspace.name}</span></span>
+      <em className={`cloudSyncStatus ${syncStatus.phase}`} data-mobile-label={compactSyncStatus}><span>{syncStatus.message}</span></em>
+      <button className="switchMemberAction" onClick={signOut}><LogOut/>Switch Member</button>
       <button className="mobileMoreAction" aria-label="More pages and settings" onClick={()=>window.dispatchEvent(new Event('jst-mobile-more'))}><MoreHorizontal/></button>
     </div>
     {children}
