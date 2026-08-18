@@ -357,3 +357,116 @@ main:has(>.dashboardFeatureStrip)>header h1:after{height:6px;background:linear-g
 .is-mobile .mobileBottomNav svg{width:19px!important;height:19px!important}
 .is-mobile .app>main{padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
 .is-mobile .app>main.dashboardMain{padding-bottom:calc(118px + env(safe-area-inset-bottom))!important}
+
+/* FINAL shared JS-mobile layout. Compact iPhone spacing must not depend on media-query order. */
+html.is-mobile,html.is-mobile body,html.is-mobile #root,html.is-mobile #jst-app-chrome,.is-mobile .cloudSession,.is-mobile .app{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+.is-mobile .cloudSession,.is-mobile .app{overflow-x:clip}
+.is-mobile .app>aside,.is-mobile .app>aside.open{display:none!important;width:0!important;max-width:0!important;min-width:0!important;margin:0!important;padding:0!important;transform:none!important;visibility:hidden!important;pointer-events:none!important}
+.is-mobile .app>main,.is-mobile .app>main.dashboardMain{position:relative!important;left:auto!important;right:auto!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:12px max(12px,env(safe-area-inset-right)) calc(112px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))!important;box-sizing:border-box!important;overflow-x:visible!important}
+.is-mobile .app>main>*{max-width:100%;min-width:0;box-sizing:border-box}
+.is-mobile .app>main:not(.dashboardMain)>header{position:relative!important;inset:auto!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;width:100%!important;max-width:100%!important;min-width:0!important;height:auto!important;min-height:58px!important;margin:0 0 14px!important;padding:10px 11px!important;align-items:center!important;gap:10px!important;box-sizing:border-box!important}
+.is-mobile .app>main:not(.dashboardMain)>header>.mobile{display:none!important}
+.is-mobile .app>main:not(.dashboardMain)>header>div{min-width:0!important;max-width:100%!important}
+.is-mobile .app>main:not(.dashboardMain)>header .eyebrow{display:none!important}
+.is-mobile .app>main:not(.dashboardMain)>header h1{width:auto!important;max-width:100%!important;min-width:0!important;margin:0!important;font-size:clamp(24px,7.5vw,31px)!important;line-height:1!important;letter-spacing:.025em!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important}
+.is-mobile .app>main:not(.dashboardMain)>header .headerActions{display:flex!important;min-width:0!important;max-width:100%!important;justify-content:flex-end!important}
+.is-mobile .app>main:not(.dashboardMain)>header>.primary,.is-mobile .app>main:not(.dashboardMain)>header .headerActions>.primary{width:auto!important;max-width:145px!important;min-width:0!important;min-height:42px!important;padding:9px 11px!important;gap:6px!important;font-size:clamp(9px,2.7vw,11px)!important;line-height:1!important;white-space:nowrap!important;box-shadow:none!important}
+.is-mobile .app>main:not(.dashboardMain)>header .primary svg{display:block!important;width:16px!important;height:16px!important;flex:0 0 16px!important;margin:0!important}
+.is-mobile .cards,.is-mobile .contentGrid,.is-mobile .rehearsalCards,.is-mobile .releaseTimelineCards,.is-mobile .taskList,.is-mobile .tableWrap,.is-mobile .toolbar{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+.is-mobile .cards,.is-mobile .contentGrid,.is-mobile .rehearsalCards,.is-mobile .releaseTimelineCards{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+.is-mobile .card,.is-mobile .record,.is-mobile .taskRow,.is-mobile .tableWrap,.is-mobile .pageLead{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+.is-mobile .recordTop,.is-mobile .cardHead,.is-mobile .actions,.is-mobile .row,.is-mobile .showMeta{min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+.is-mobile .recordTop>*,.is-mobile .cardHead>*,.is-mobile .taskMain,.is-mobile .songIdentity>div{min-width:0!important;max-width:100%!important}
+.is-mobile .actions,.is-mobile .row,.is-mobile .showMeta{flex-wrap:wrap!important}
+.is-mobile h1,.is-mobile h2,.is-mobile h3,.is-mobile p,.is-mobile b,.is-mobile small{max-width:100%;word-break:normal;overflow-wrap:break-word}
+.is-mobile input,.is-mobile select,.is-mobile textarea,.is-mobile button{max-width:100%;box-sizing:border-box}
+.is-mobile .cloudSession main:before{position:absolute;right:8px;top:18vh;width:min(68%,260px);max-width:calc(100% - 16px)}
+
+/* JS-mobile navigation and sheets. */
+.is-mobile .mobileBottomNav{position:fixed!important;z-index:80!important;inset:auto 0 0!important;display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;width:100%!important;max-width:100%!important;height:calc(72px + env(safe-area-inset-bottom))!important;margin:0!important;padding-top:5px!important;padding-right:max(4px,env(safe-area-inset-right))!important;padding-bottom:env(safe-area-inset-bottom)!important;padding-left:max(4px,env(safe-area-inset-left))!important;box-sizing:border-box!important}
+.is-mobile .mobileBottomNav button{display:grid!important;min-width:0!important;min-height:54px!important;padding:4px 1px!important;place-items:center!important;align-content:center!important;gap:3px!important;font-size:7px!important;white-space:nowrap!important}
+.is-mobile .mobileBottomNav svg{width:19px!important;height:19px!important}
+.is-mobile .quickAddFab{position:fixed!important;z-index:75!important;right:max(18px,env(safe-area-inset-right))!important;bottom:calc(82px + env(safe-area-inset-bottom))!important;display:grid!important;place-items:center!important;width:54px!important;height:54px!important}
+.is-mobile .mobileSheet{position:fixed!important;z-index:90!important;left:max(8px,env(safe-area-inset-left))!important;right:max(8px,env(safe-area-inset-right))!important;bottom:calc(72px + env(safe-area-inset-bottom))!important;display:block!important;width:auto!important;max-width:none!important;max-height:min(78dvh,680px)!important;overflow:auto!important;padding:8px 16px 18px!important;box-sizing:border-box!important}
+.is-mobile .quickGrid,.is-mobile .moreGrid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+.is-mobile .quickGrid button,.is-mobile .moreGrid button{display:flex!important;min-width:0!important;min-height:72px!important;align-items:center!important;gap:10px!important;padding:14px!important;white-space:normal!important}
+.is-mobile .moreGrid button:last-child:nth-child(odd){grid-column:1/-1!important}
+
+/* Tasks: card content uses the compact width instead of desktop columns. */
+.is-mobile .taskList{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important;padding:7px!important}
+.is-mobile .taskRow{display:grid!important;grid-template-columns:22px minmax(0,1fr) auto!important;grid-template-rows:auto auto auto!important;gap:7px 8px!important;padding:12px 10px!important;align-items:start!important}
+.is-mobile .taskRow>input{grid-column:1!important;grid-row:1!important;margin-top:2px!important}
+.is-mobile .taskRow>.taskMain{grid-column:2!important;grid-row:1!important}
+.is-mobile .taskRow>.taskMain b{display:block!important;font-size:clamp(16px,5vw,19px)!important;line-height:1.08!important;white-space:normal!important}
+.is-mobile .taskRow>.taskMain p{margin:5px 0 0!important;font-size:10px!important;line-height:1.4!important;white-space:normal!important}
+.is-mobile .taskRow>.badge:first-of-type{grid-column:2!important;grid-row:2!important;display:inline-flex!important;justify-self:start!important}
+.is-mobile .taskRow>.badge:last-of-type{grid-column:3!important;grid-row:2!important;display:inline-flex!important;justify-self:end!important}
+.is-mobile .taskRow>span{grid-column:2!important;grid-row:3!important;display:block!important;min-width:0!important;font-size:9px!important}
+.is-mobile .taskRow>time{grid-column:3!important;grid-row:3!important;display:block!important;font-size:9px!important;white-space:nowrap!important}
+.is-mobile .taskRow>.actions{grid-column:3!important;grid-row:1!important;display:flex!important;justify-content:flex-end!important;gap:4px!important}
+.is-mobile .taskRow>.actions .icon{width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;padding:7px!important}
+.is-mobile .taskRow .badge{max-width:100%!important;padding:4px 6px!important;font-size:7px!important}
+
+/* Songs: stack controls and convert the catalog table into contained cards. */
+.is-mobile .songsToolbar{display:grid!important;grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important;gap:10px!important;margin-bottom:13px!important}
+.is-mobile .songsToolbar .search{width:100%!important;max-width:100%!important;min-width:0!important}
+.is-mobile .songToolbarMeta{display:flex!important;width:100%!important;max-width:100%!important;min-width:0!important;align-items:center!important;justify-content:space-between!important;flex-wrap:wrap!important;gap:8px!important}
+.is-mobile .songSortControl{display:flex!important;flex:1 1 190px!important;width:auto!important;min-width:0!important;justify-content:space-between!important;gap:8px!important}
+.is-mobile .songSortControl select{flex:1 1 120px!important;width:auto!important;min-width:0!important;max-width:160px!important}
+.is-mobile .songToolbarMeta>span{display:block!important;flex:1 1 100%!important;font-size:8px!important;line-height:1.3!important}
+.is-mobile .tableWrap{overflow:visible!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.is-mobile .tableWrap table,.is-mobile .tableWrap tbody,.is-mobile .tableWrap tr,.is-mobile .tableWrap td{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+.is-mobile .tableWrap table{background:transparent!important}.is-mobile .tableWrap thead{display:none!important}.is-mobile .tableWrap tbody{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
+.is-mobile .tableWrap tbody tr{position:relative!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important;padding:13px 12px!important}
+.is-mobile .tableWrap td{min-width:0!important;padding:0!important;border:0!important;font-size:11px!important}
+.is-mobile .tableWrap td:first-child{grid-column:1/-1!important;padding-right:72px!important;padding-bottom:11px!important;border-bottom:1px dashed #64514d!important}
+.is-mobile .songIdentity{display:flex!important;width:100%!important;max-width:100%!important;min-width:0!important;gap:11px!important;align-items:center!important}
+.is-mobile .songIdentity img,.is-mobile .artFallback{width:58px!important;height:58px!important;flex:0 0 58px!important}
+.is-mobile .songIdentity b{display:block!important;font-size:clamp(18px,5.5vw,21px)!important;line-height:1!important;white-space:normal!important}
+.is-mobile .songIdentity small{display:-webkit-box!important;max-width:none!important;margin-top:5px!important;overflow:hidden!important;line-height:1.35!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important}
+.is-mobile .tableWrap td:nth-child(2),.is-mobile .tableWrap td:nth-child(3),.is-mobile .tableWrap td:nth-child(4){display:flex!important;min-width:0!important;flex-direction:column!important;align-items:flex-start!important;gap:5px!important}
+.is-mobile .tableWrap td:nth-child(2):before,.is-mobile .tableWrap td:nth-child(3):before,.is-mobile .tableWrap td:nth-child(4):before{color:#a99b94;font:800 8px Inter;letter-spacing:.12em}
+.is-mobile .tableWrap td:nth-child(2):before{content:"STATUS"}.is-mobile .tableWrap td:nth-child(3):before{content:"KEY"}.is-mobile .tableWrap td:nth-child(4):before{content:"TUNING"}
+.is-mobile .tableWrap td:last-child{position:absolute!important;top:12px!important;right:10px!important;width:auto!important}
+.is-mobile .tableWrap td:last-child .actions{gap:3px!important}.is-mobile .tableWrap td:last-child .icon{width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;padding:7px!important}
+
+/* Releases: keep the card narrow and make only the milestone strip scroll. */
+.is-mobile .releaseTimelineCards{overflow:visible!important}
+.is-mobile .releaseTimelineRecord{padding:14px!important}
+.is-mobile .releaseTimelineTop{display:grid!important;grid-template-columns:86px minmax(0,1fr)!important;width:100%!important;max-width:100%!important;min-width:0!important;gap:12px!important;align-items:start!important}
+.is-mobile .releaseTimelineTop>img{width:86px!important;max-width:100%!important;height:86px!important}
+.is-mobile .releaseTimelineTop>div{min-width:0!important;max-width:100%!important}
+.is-mobile .releaseTimelineTop h2{font-size:clamp(24px,7vw,30px)!important;line-height:.98!important;white-space:normal!important;overflow-wrap:normal!important}
+.is-mobile .releaseTimelineTop>.actions{grid-column:1/-1!important;display:flex!important;width:100%!important;justify-content:flex-end!important}
+.is-mobile .releaseTimeline{display:flex!important;grid-template-columns:none!important;width:100%!important;max-width:100%!important;min-width:0!important;margin-top:16px!important;padding:4px 6px 10px!important;gap:7px!important;overflow-x:auto!important;overflow-y:hidden!important;overscroll-behavior-inline:contain!important;scroll-padding-inline:6px!important;scroll-snap-type:x proximity!important;-webkit-overflow-scrolling:touch!important;box-sizing:border-box!important}
+.is-mobile .releaseTimeline>button{display:block!important;flex:0 0 126px!important;width:126px!important;min-width:126px!important;max-width:126px!important;padding:10px 7px!important;text-align:center!important;scroll-snap-align:start!important}
+.is-mobile .releaseTimeline>button:after{content:"→"!important;right:-9px!important;left:auto!important;top:14px!important;bottom:auto!important}
+.is-mobile .releaseTimeline i{margin:auto!important}.is-mobile .releaseTimeline b,.is-mobile .releaseTimeline span,.is-mobile .releaseTimeline small{margin-top:5px!important}
+.is-mobile .releaseDetails{display:flex!important;width:100%!important;max-width:100%!important;justify-content:center!important;white-space:normal!important}
+.is-mobile .releaseSections{display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important;min-width:0!important}
+.is-mobile .milestoneEditor{display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important}
+.is-mobile .milestoneEditor>*{width:100%!important;min-width:0!important}
+
+/* Shows and rehearsals: use the full compact column. */
+.is-mobile .posterShowRecord{display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important;min-width:0!important;padding:0!important;overflow:hidden!important}
+.is-mobile .showPoster{width:100%!important;max-width:100%!important;min-width:0!important;border-right:0!important;border-bottom:2px solid #5a4946!important}
+.is-mobile .showPoster img,.is-mobile .showPoster img[alt$=" poster"]{display:block!important;width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;aspect-ratio:1/1!important;object-fit:contain!important;object-position:center!important}
+.is-mobile .showRecordBody{width:100%!important;max-width:100%!important;min-width:0!important;padding:14px!important;box-sizing:border-box!important}
+.is-mobile .posterShowRecord .recordTop{display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;gap:10px!important}
+.is-mobile .posterShowRecord .dateBlock{display:none!important}
+.is-mobile .posterShowRecord .recordTop h2{font-size:clamp(25px,7vw,31px)!important;line-height:1!important;white-space:normal!important}
+.is-mobile .posterShowRecord .actions{display:flex!important;width:100%!important;justify-content:flex-start!important}
+.is-mobile .posterShowRecord .showMeta{display:flex!important;width:100%!important;gap:9px 14px!important}
+.is-mobile .posterShowRecord .setlist>span:not(.eyebrow){max-width:100%!important;white-space:normal!important}
+.is-mobile .pageLead{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;align-items:start!important;margin-bottom:14px!important;padding:14px!important;transform:none!important}
+.is-mobile .pageLead p{margin:0!important;line-height:1.45!important}.is-mobile .pageLead .primary{width:100%!important;min-height:44px!important;justify-content:center!important}
+.is-mobile .rehearsalRecord{padding:16px!important}.is-mobile .rehearsalActions{display:flex!important;width:100%!important;justify-content:flex-start!important;gap:7px!important;flex-wrap:wrap!important}
+.is-mobile .rehearsalSong,.is-mobile .afterGrid,.is-mobile .recapGrid,.is-mobile .performanceRow,.is-mobile .issueRow,.is-mobile .recapMerch{display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important;min-width:0!important}
+.is-mobile .rehearsalSong>*{grid-column:1!important;min-width:0!important}
+
+/* Secondary pages reached through More. */
+.is-mobile .filters{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important}.is-mobile .filters select{width:100%!important;min-width:0!important}
+.is-mobile .dataHero{padding:16px!important}.is-mobile .dataHero h2{font-size:clamp(28px,8vw,34px)!important}.is-mobile .dataActions{display:grid!important;grid-template-columns:minmax(0,1fr)!important}
+.is-mobile .dataActions article{min-height:0!important}.is-mobile .dataActions article .primary,.is-mobile .dataActions article .ghost{width:100%!important;min-height:48px!important}
+.is-mobile .cloudDataPanel{padding:14px!important}.is-mobile .cloudDataHead{align-items:flex-start!important;flex-wrap:wrap!important}.is-mobile .cloudDataPanel dl{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.is-mobile .nestedCounts{grid-template-columns:minmax(0,1fr)!important}.is-mobile .dataPage,.is-mobile .cloudDataPanel,.is-mobile .dataActions{width:100%!important;max-width:100%!important;min-width:0!important}
