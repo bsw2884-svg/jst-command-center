@@ -7,8 +7,8 @@ const mobile=[['Dashboard','Home',Home],['Shows','Shows',CalendarDays],['Rehears
 type Props={page:string;onNavigate:(page:string)=>void;onQuickAdd:(section:string)=>void};
 
 export default function AppNav({page,onNavigate,onQuickAdd}:Props){
- const [more,setMore]=useState(false),[quick,setQuick]=useState(false),[settings,setSettings]=useState(false),[installEvent,setInstallEvent]=useState<any>(null),[update,setUpdate]=useState<ServiceWorkerRegistration|null>(null);
- useEffect(()=>{const install=(e:any)=>{e.preventDefault();setInstallEvent(e)};window.addEventListener('beforeinstallprompt',install);if('serviceWorker'in navigator){navigator.serviceWorker.register('/sw.js').then(reg=>{if(reg.waiting)setUpdate(reg);reg.addEventListener('updatefound',()=>reg.installing?.addEventListener('statechange',()=>{if(reg.waiting&&navigator.serviceWorker.controller)setUpdate(reg)}))});navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload())}return()=>window.removeEventListener('beforeinstallprompt',install)},[]);
+ const [more,setMore]=useState(false),[quick,setQuick]=useState(false),[settings,setSettings]=useState(false),[installEvent,setInstallEvent]=useState<any>(null);
+ useEffect(()=>{const install=(e:any)=>{e.preventDefault();setInstallEvent(e)};window.addEventListener('beforeinstallprompt',install);return()=>window.removeEventListener('beforeinstallprompt',install)},[]);
  useEffect(()=>{const openMore=()=>setMore(true);window.addEventListener('jst-mobile-more',openMore);return()=>window.removeEventListener('jst-mobile-more',openMore)},[]);
  const go=(p:string)=>{onNavigate(p);setMore(false);setSettings(false)};
  const add=(p:string)=>{onQuickAdd(p);setQuick(false)};
@@ -18,7 +18,6 @@ export default function AppNav({page,onNavigate,onQuickAdd}:Props){
   <button className="quickAddFab" aria-label="Quick Add" onClick={()=>setQuick(true)}><Plus/></button>
   {more&&<div className="mobileSheet compactSheet"><div className="sheetHandle"/><div className="sheetHead"><b>MORE</b><button className="icon" onClick={()=>setMore(false)}><X/></button></div><div className="moreGrid"><button onClick={()=>go('Content')}><Clapperboard/>Content</button><button onClick={()=>go('Data')}><Settings/>Settings / Data</button>{installEvent&&<button onClick={async()=>{await installEvent.prompt();setInstallEvent(null)}}><Download/>Install JST Command</button>}</div></div>}
   {quick&&<div className="mobileSheet quickSheet"><div className="sheetHandle"/><div className="sheetHead"><div><span>KEEP IT MOVING</span><b>QUICK ADD</b></div><button className="icon" onClick={()=>setQuick(false)}><X/></button></div><div className="quickGrid">{[['Shows','Show',CalendarDays],['Rehearsals','Rehearsal',CalendarClock],['Releases','Release',Disc3],['Songs','Song',Music2],['Content','Content',Clapperboard],['Tasks','Task',CheckSquare]].map(([section,label,Icon]:any)=><button key={section} onClick={()=>add(section)}><Icon/>{label}</button>)}</div></div>}
-  {update&&<div className="updateToast"><div><b>JST Command Center update ready</b><span>Your local data is safe.</span></div><button onClick={()=>update.waiting?.postMessage({type:'SKIP_WAITING'})}>Update</button><button className="textBtn" onClick={()=>setUpdate(null)}>Later</button></div>}
  </>;
 }
 

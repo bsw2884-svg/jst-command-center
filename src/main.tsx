@@ -18,14 +18,12 @@ import {installViewportDebugOverlay} from './lib/viewport';
 
 installViewportDebugOverlay();
 
-if (import.meta.env.PROD && 'serviceWorker' in navigator) {
- let refreshing=false;
- navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}});
- void navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(async registration=>{
-  await registration.update();
-  registration.waiting?.postMessage({type:'SKIP_WAITING'});
- }).catch(()=>undefined);
+async function clearLegacyPwaCaches(){
+ const registrations='serviceWorker'in navigator?await navigator.serviceWorker.getRegistrations().catch(()=>[]):[];
+ await Promise.all(registrations.map(registration=>registration.unregister()));
+ if('caches'in window){const keys=await caches.keys();await Promise.all(keys.map(key=>caches.delete(key)))}
 }
+void clearLegacyPwaCaches();
 
 type Status='Not Started'|'In Progress'|'Complete';
 type Song={id:string;title:string;bpm:number;key:string;tuning:string;length:string;status:string;notes:string};
