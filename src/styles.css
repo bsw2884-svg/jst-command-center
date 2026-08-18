@@ -275,21 +275,22 @@ main:has(>.dashboardFeatureStrip)>header h1:after{height:6px;background:linear-g
 /* Sub-600px authenticated dashboard polish. Kept last so poster layers cannot override it. */
 @media(max-width:600px){
  .app>main{padding-bottom:calc(118px + env(safe-area-inset-bottom))}
- .app>main:has(>.dashboardFeatureStrip){padding-top:12px}
- .app>main:has(>.dashboardFeatureStrip)>header{display:grid;grid-template-columns:minmax(0,1fr) auto;width:100%;max-width:100%;min-height:52px;gap:8px;align-items:center;margin:0 0 12px;padding:9px 11px}
- .app>main:has(>.dashboardFeatureStrip)>header>div:first-of-type{min-width:0}
- .app>main:has(>.dashboardFeatureStrip)>header h1{max-width:100%;font-size:clamp(24px,7.2vw,29px);line-height:1;letter-spacing:.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
- .app>main:has(>.dashboardFeatureStrip)>header .headerActions{display:flex;min-width:44px;justify-content:flex-end}
- .app>main:has(>.dashboardFeatureStrip)>header .showModeBtn{display:grid;width:44px;min-width:44px;height:42px;min-height:42px;padding:0;place-items:center;overflow:hidden}
- .app>main:has(>.dashboardFeatureStrip)>header .showModeBtn svg{width:19px;height:19px;margin:0}
- .dashboardFeatureStrip{width:100%;max-width:100%;grid-template-columns:minmax(0,1fr);gap:10px;margin-bottom:14px}
- .dashboardFeatureStrip>*{width:100%;max-width:100%;min-width:0}
- .dashboardFeatureStrip .dashRehearsal h3{font-size:23px;line-height:1.05;overflow-wrap:normal;word-break:normal}
- .dashboardFeatureStrip .dashRehearsal p{font-size:10px;line-height:1.45;overflow-wrap:normal;word-break:normal}
- .dashboardFeatureStrip .dashReleaseProgress{grid-template-columns:64px minmax(0,1fr);gap:10px;align-items:center}
- .dashboardFeatureStrip .dashReleaseProgress img{width:64px;height:64px}
- .dashboardFeatureStrip .dashReleaseProgress h3{font-size:23px;line-height:1.05;overflow-wrap:normal;word-break:normal}
- .dashboardFeatureStrip .dashReleaseProgress b,.dashboardFeatureStrip .dashReleaseProgress p{font-size:9px;line-height:1.4;overflow-wrap:normal;word-break:normal}
+ .app>main.dashboardMain{padding-top:12px}
+ .app>main.dashboardMain>header{display:grid;grid-template-columns:minmax(0,1fr);width:100%;max-width:100%;height:auto;min-height:0;gap:9px;align-items:stretch;margin:0 0 12px;padding:10px 11px}
+ .app>main.dashboardMain>header>div:first-of-type{width:100%;min-width:0}
+ .app>main.dashboardMain>header h1{max-width:100%;font-size:clamp(23px,7vw,28px);line-height:1;letter-spacing:.025em;white-space:normal;overflow:visible;text-overflow:clip}
+ .app>main.dashboardMain>header .headerActions{display:flex;width:100%;min-width:0}
+ .app>main.dashboardMain>header .showModeBtn{display:flex;width:100%;min-width:0;min-height:42px;height:auto;padding:9px 12px;justify-content:center;overflow:visible;font-size:clamp(9px,2.7vw,11px);white-space:nowrap}
+ .app>main.dashboardMain>header .showModeBtn svg{display:block;width:18px;height:18px;margin:0}
+ .app>main.dashboardMain>.dashboardFeatureStrip{display:grid;width:100%;max-width:100%;min-width:0;grid-template-columns:minmax(0,1fr);gap:10px;margin-bottom:14px}
+ .app>main.dashboardMain>.dashboardFeatureStrip>*{width:100%;max-width:100%;min-width:0;grid-column:1/-1;flex:0 1 auto}
+ .app>main.dashboardMain>.dashboardFeatureStrip .dashRehearsal h3{font-size:clamp(20px,6vw,23px);line-height:1.08;overflow-wrap:normal;word-break:normal}
+ .app>main.dashboardMain>.dashboardFeatureStrip .dashRehearsal p{font-size:10px;line-height:1.45;overflow-wrap:normal;word-break:normal}
+ .app>main.dashboardMain>.dashboardFeatureStrip .dashReleaseProgress{display:grid;grid-template-columns:minmax(0,1fr);gap:9px;align-items:start}
+ .app>main.dashboardMain>.dashboardFeatureStrip .dashReleaseProgress>div{width:100%;max-width:100%;min-width:0}
+ .app>main.dashboardMain>.dashboardFeatureStrip .dashReleaseProgress img{width:72px;height:72px;max-width:100%}
+ .app>main.dashboardMain>.dashboardFeatureStrip .dashReleaseProgress h3{font-size:clamp(20px,6vw,23px);line-height:1.08;white-space:normal;overflow-wrap:normal;word-break:normal}
+ .app>main.dashboardMain>.dashboardFeatureStrip .dashReleaseProgress b,.app>main.dashboardMain>.dashboardFeatureStrip .dashReleaseProgress p{font-size:9px;line-height:1.4;white-space:normal;overflow-wrap:normal;word-break:normal}
  .hero{width:100%;max-width:100%;min-width:0;grid-template-columns:minmax(0,1fr) auto;gap:8px;min-height:270px;padding:16px 13px;background-position:center}
  .heroCopy{width:100%;max-width:none;min-width:0;padding:12px 13px}
  .heroCopy h2{max-width:215px;font-size:clamp(27px,7.8vw,31px);line-height:.93;overflow-wrap:normal;word-break:normal}
