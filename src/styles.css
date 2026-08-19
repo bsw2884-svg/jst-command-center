@@ -494,3 +494,18 @@ html.is-mobile body{overscroll-behavior-y:auto!important;touch-action:auto!impor
 .is-mobile .songIdentity small{color:#b9afa8!important;opacity:.86!important}
 .is-mobile .tableWrap td:last-child{top:13px!important;right:11px!important}
 .is-mobile .tableWrap td:nth-child(2),.is-mobile .tableWrap td:nth-child(3),.is-mobile .tableWrap td:nth-child(4){width:100%!important;max-width:100%!important;min-width:0!important;padding-top:1px!important;overflow:visible!important}
+
+/* Android-reference mobile rhythm: near-edge cards with one document scroller. */
+html.is-mobile{height:auto!important;min-height:100%;overflow-y:auto!important}
+html.is-mobile body,html.is-mobile #root{height:auto!important;min-height:100%;overflow-y:visible!important}
+.is-mobile .cloudSession,.is-mobile .app,.is-mobile .app>main{height:auto!important;max-height:none!important;overflow-y:visible!important}
+.is-mobile .app>main,.is-mobile .app>main.dashboardMain{padding-left:max(4px,env(safe-area-inset-left))!important;padding-right:max(4px,env(safe-area-inset-right))!important}
+.is-mobile .songsToolbar{width:100%!important;max-width:100%!important;margin-inline:0!important}
+.is-mobile .songToolbarMeta{display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important}
+.is-mobile .songSortControl{display:flex!important;flex:none!important;width:100%!important;max-width:100%!important;align-items:center!important}
+.is-mobile .songSortControl select{margin-left:auto!important}
+.is-mobile .songToolbarMeta>span{width:100%!important}
+.is-mobile .tableWrap tbody{gap:9px!important}
+.is-mobile .tableWrap tbody tr{width:100%!important;max-width:100%!important;margin:0!important}
+.is-mobile .songIdentity>div{flex:1 1 auto!important;width:auto!important}
+.is-mobile .songIdentity b{width:100%!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important}
