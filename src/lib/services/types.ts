@@ -47,6 +47,39 @@ export type TaskRecord = CloudRecord & {
   assigned: string; notes: string; complete: boolean
 }
 
+export type WritingStage = 'Idea' | 'Writing' | 'Demo' | 'Arrangement' | 'Ready to Record'
+
+export type WritingSongRecord = Omit<CloudRecord, 'legacy_id'> & {
+  title: string
+  stage: WritingStage
+  progress: number
+  musical_key: string
+  tuning: string
+  next_step: string
+  notes: string
+  created_by_member_id: string | null
+  created_by_name: string | null
+  converted_song_id: string | null
+  converted_at: string | null
+}
+
+export type AudioClipRecord = {
+  id: string
+  workspace_id: string
+  writing_song_id: string
+  storage_path: string
+  display_name: string
+  mime_type: string
+  size_bytes: number
+  duration_seconds: number | null
+  notes: string
+  uploaded_by: string
+  uploaded_by_member_id: string | null
+  uploaded_by_name: string | null
+  created_at: string
+  updated_at: string
+}
+
 export type Workspace = {
   id: string; name: string; created_by: string; created_at: string; updated_at: string
 }
