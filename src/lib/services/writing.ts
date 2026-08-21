@@ -4,16 +4,16 @@ import type { AudioClipRecord, MemberContext, SongRecord, WritingSongRecord } fr
 
 export const SONG_AUDIO_BUCKET = 'song-audio'
 export const MAX_AUDIO_BYTES = 50 * 1024 * 1024
-export const AUDIO_ACCEPT = '.mp3,.wav,.m4a,.aac,audio/mpeg,audio/wav,audio/mp4,audio/aac'
+export const AUDIO_ACCEPT = '.mp3,.wav,.m4a,.aac,.webm,.ogg,audio/mpeg,audio/wav,audio/mp4,audio/aac,audio/webm,audio/ogg'
 
 type WritingInput = Pick<WritingSongRecord, 'title' | 'stage' | 'progress' | 'musical_key' | 'tuning' | 'next_step' | 'notes'>
 
 const safeName = (name: string) => name.normalize('NFKD').replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/-+/g, '-').slice(-100)
 const ext = (name: string) => name.split('.').pop()?.toLowerCase() ?? ''
-const allowedExtensions = new Set(['mp3', 'wav', 'm4a', 'aac'])
+const allowedExtensions = new Set(['mp3', 'wav', 'm4a', 'aac', 'webm', 'ogg'])
 
 export function validateAudioFile(file: File) {
-  if (!allowedExtensions.has(ext(file.name))) throw new Error('Choose an MP3, WAV, M4A, or AAC audio file.')
+  if (!allowedExtensions.has(ext(file.name))) throw new Error('Choose an MP3, WAV, M4A, AAC, WebM, or Ogg audio file.')
   if (file.size > MAX_AUDIO_BYTES) throw new Error('Audio clips must be 50 MB or smaller.')
 }
 
