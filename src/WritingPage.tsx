@@ -4,6 +4,7 @@ import { AUDIO_ACCEPT, writingService, type AudioClipRecord, type MemberContext,
 import './writing.css'
 
 const STAGES: WritingStage[] = ['Idea', 'Writing', 'Demo', 'Arrangement', 'Ready to Record']
+type StageFilter = 'All' | WritingStage
 const blankDraft = { title: '', stage: 'Idea' as WritingStage, progress: 10, musical_key: '', tuning: 'Standard', next_step: '', notes: '' }
 type Draft = typeof blankDraft
 
@@ -25,6 +26,7 @@ function WritingCloudPage({ context, onCatalogChanged }: { context: MemberContex
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [editing, setEditing] = useState<WritingSongRecord | null>(null)
   const [creating, setCreating] = useState(false)
+  const [stageFilter, setStageFilter] = useState<StageFilter>('All')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -42,15 +44,16 @@ function WritingCloudPage({ context, onCatalogChanged }: { context: MemberContex
   useEffect(() => { const open = () => setCreating(true); window.addEventListener('jst-new-writing-song', open); return () => window.removeEventListener('jst-new-writing-song', open) }, [])
 
   const selected = songs.find(song => song.id === selectedId) ?? null
+  const filteredSongs = stageFilter === 'All' ? songs : songs.filter(song => song.stage === stageFilter)
   if (loading) return <div className="writingState"><Music2/><b>OPENING THE WRITING ROOM…</b></div>
   if (error && setupMissing(error)) return <SetupRequired detail={error}/>
   if (selected) return <WritingDetail context={context} song={selected} clips={clips.filter(clip => clip.writing_song_id === selected.id)} onBack={() => setSelectedId(null)} onChanged={load} onEdit={() => { setEditing(selected); setSelectedId(null) }} onDeleted={() => setSelectedId(null)} onCatalogChanged={onCatalogChanged}/>
 
   return <section className="writingPage">
     {error && <div className="writingError">{error}<button onClick={() => void load()}>TRY AGAIN</button></div>}
-    <div className="writingIntro"><div><span className="eyebrow">JST SONG LAB</span><h2>IN THE WORKS</h2><p>Ideas, demos, voice memos, and everything becoming a song.</p></div><button className="primary writingNew" onClick={() => setCreating(true)}><Plus/> New Writing Song</button></div>
-    <div className="writingStageKey">{STAGES.map(stage => <span key={stage}>{stage}</span>)}</div>
-    {songs.length ? <div className="writingGrid">{songs.map(song => {
+    <div className="writingIntro"><div><span className="eyebrow">JST SONG LAB</span><h2>IN THE WORKS</h2><p>Ideas, demos, voice memos, and everything becoming a song.</p></div></div>
+    <div className="writingStageKey" role="group" aria-label="Filter Writing songs by stage">{(['All', ...STAGES] as StageFilter[]).map(stage => <button type="button" className={`writingFilter stage-${stage.toLowerCase().replaceAll(' ', '-')} ${stageFilter === stage ? 'active' : ''}`} aria-pressed={stageFilter === stage} onClick={() => setStageFilter(stage)} key={stage}>{stage}</button>)}</div>
+    {filteredSongs.length ? <div className="writingGrid">{filteredSongs.map(song => {
       const songClips = clips.filter(clip => clip.writing_song_id === song.id)
       return <article className="writingCard" key={song.id} onClick={() => setSelectedId(song.id)}>
         <div className={`writingStage stage-${song.stage.toLowerCase().replaceAll(' ', '-')}`}>{song.stage}</div>
@@ -61,7 +64,7 @@ function WritingCloudPage({ context, onCatalogChanged }: { context: MemberContex
         {songClips[0] && <div className="writingLatestClip"><FileAudio/><span><small>LATEST CLIP</small><b>{songClips[0].display_name}</b></span></div>}
         <small>EDITED {dateLabel(song.updated_at)} · {song.last_edited_by_name || 'JST'}</small>
       </article>
-    })}</div> : <div className="writingEmpty"><Music2/><h3>THE PAGE IS BLANK. GOOD.</h3><p>Start a song and give the first idea somewhere to live.</p><button className="primary" onClick={() => setCreating(true)}><Plus/> Start a Song</button></div>}
+    })}</div> : songs.length ? <div className="writingFilterEmpty"><Music2/><b>NO SONGS IN THIS STAGE YET.</b><span>Pick another stage or switch back to All.</span></div> : <div className="writingEmpty"><Music2/><h3>THE PAGE IS BLANK. GOOD.</h3><p>Start a song and give the first idea somewhere to live.</p><button className="primary" onClick={() => setCreating(true)}><Plus/> Start a Song</button></div>}
     {(creating || editing) && <WritingSongModal initial={editing ? toDraft(editing) : blankDraft} title={editing ? 'EDIT WRITING SONG' : 'NEW WRITING SONG'} onClose={() => { setCreating(false); setEditing(null) }} onSave={async draft => {
       if (editing) await writingService.update(context, editing.id, draft)
       else await writingService.create(context, draft)
