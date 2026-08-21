@@ -1,10 +1,10 @@
 import {useEffect,useState} from 'react';
 import {createRoot,type Root} from 'react-dom/client';
-import {CalendarClock,CalendarDays,CheckSquare,ChevronRight,Clapperboard,Disc3,Download,Home,MoreHorizontal,Music2,Plus,Settings,X} from 'lucide-react';
+import {CalendarClock,CalendarDays,CheckSquare,ChevronRight,Clapperboard,Disc3,Download,Home,MoreHorizontal,Music2,PenLine,Plus,Settings,X} from 'lucide-react';
 
-const desktop=[['Dashboard',Home],['Shows',CalendarDays],['Rehearsals',CalendarClock],['Releases',Disc3],['Songs',Music2],['Content',Clapperboard],['Tasks',CheckSquare]] as const;
+const desktop=[['Dashboard',Home],['Shows',CalendarDays],['Rehearsals',CalendarClock],['Releases',Disc3],['Songs',Music2],['Writing',PenLine],['Content',Clapperboard],['Tasks',CheckSquare]] as const;
 const mobile=[['Dashboard','Home',Home],['Shows','Shows',CalendarDays],['Rehearsals','Rehearse',CalendarClock],['Releases','Releases',Disc3],['Songs','Songs',Music2]] as const;
-const morePages=['Tasks','Content','Data'];
+const morePages=['Writing','Tasks','Content','Data'];
 type Props={page:string;onNavigate:(page:string)=>void;onQuickAdd:(section:string)=>void};
 
 export default function AppNav({page,onNavigate,onQuickAdd}:Props){
@@ -17,7 +17,7 @@ export default function AppNav({page,onNavigate,onQuickAdd}:Props){
   <nav className="desktopNav">{desktop.map(([name,Icon])=><button className={page===name?'active':''} onClick={()=>go(name)} key={name}><Icon/>{name}</button>)}</nav>
   <nav className="mobileBottomNav">{mobile.map(([name,label,Icon])=><button className={!more&&page===name?'active':''} onClick={()=>go(name)} key={name}><Icon/><span>{label}</span></button>)}<button className={more||morePages.includes(page)?'active':''} onClick={()=>setMore(true)}><MoreHorizontal/><span>More</span></button></nav>
   <button className="quickAddFab" aria-label="Quick Add" onClick={()=>setQuick(true)}><Plus/></button>
-  {more&&<section className="mobileSheet compactSheet moreSheet" aria-label="More navigation"><div className="sheetHandle"/><div className="sheetHead"><b>MORE</b><button className="icon" aria-label="Close More" onClick={()=>setMore(false)}><X/></button></div><div className="moreList"><button onClick={()=>go('Tasks')}><CheckSquare/><span>Tasks</span><ChevronRight/></button><button onClick={()=>go('Content')}><Clapperboard/><span>Content</span><ChevronRight/></button><button onClick={()=>go('Data')}><Settings/><span>Settings / Data</span><ChevronRight/></button>{installEvent&&<button onClick={async()=>{await installEvent.prompt();setInstallEvent(null)}}><Download/><span>Install JST Command</span><ChevronRight/></button>}</div></section>}
+  {more&&<section className="mobileSheet compactSheet moreSheet" aria-label="More navigation"><div className="sheetHandle"/><div className="sheetHead"><b>MORE</b><button className="icon" aria-label="Close More" onClick={()=>setMore(false)}><X/></button></div><div className="moreList"><button onClick={()=>go('Writing')}><PenLine/><span>Writing</span><ChevronRight/></button><button onClick={()=>go('Tasks')}><CheckSquare/><span>Tasks</span><ChevronRight/></button><button onClick={()=>go('Content')}><Clapperboard/><span>Content</span><ChevronRight/></button><button onClick={()=>go('Data')}><Settings/><span>Settings / Data</span><ChevronRight/></button>{installEvent&&<button onClick={async()=>{await installEvent.prompt();setInstallEvent(null)}}><Download/><span>Install JST Command</span><ChevronRight/></button>}</div></section>}
   {quick&&<div className="mobileSheet quickSheet"><div className="sheetHandle"/><div className="sheetHead"><div><span>KEEP IT MOVING</span><b>QUICK ADD</b></div><button className="icon" onClick={()=>setQuick(false)}><X/></button></div><div className="quickGrid">{[['Shows','Show',CalendarDays],['Rehearsals','Rehearsal',CalendarClock],['Releases','Release',Disc3],['Songs','Song',Music2],['Content','Content',Clapperboard],['Tasks','Task',CheckSquare]].map(([section,label,Icon]:any)=><button key={section} onClick={()=>add(section)}><Icon/>{label}</button>)}</div></div>}
  </>;
 }
