@@ -191,7 +191,7 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
         <div className="mixFormHeading"><div><span className="eyebrow">NEW MIX VERSION</span><h3>Upload a new pass</h3></div><button type="button" className="icon" onClick={() => setVersionForm(false)} aria-label="Close upload form"><X /></button></div>
         <label>Version name<input name="name" required placeholder="Mix 03 — Vocal Up" /></label>
         <label>Description<textarea name="description" placeholder="What changed in this version?" /></label>
-        <label>Audio file<input name="audio" type="file" accept={AUDIO_ACCEPT} required /></label>
+        <label>Audio file<input name="audio" type="file" accept={AUDIO_ACCEPT} required /><small>MP3, WAV, M4A, AAC, WebM, or Ogg · up to 250 MB</small></label>
         <button className="primary" disabled={busy}><FileAudio /> {busy ? 'Uploading…' : 'Upload Mix'}</button>
       </form>}
 

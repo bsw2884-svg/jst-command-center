@@ -1,6 +1,6 @@
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import { requireSupabase } from './core'
-import { SONG_AUDIO_BUCKET, validateAudioFile } from './writing'
+import { validateAudioFile } from './writing'
 import type {
   MemberContext,
   MixApprovalStatus,
@@ -11,6 +11,8 @@ import type {
 } from './types'
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+export const RELEASE_MIX_AUDIO_BUCKET = 'release-mixes'
+export const MAX_MIX_AUDIO_BYTES = 250 * 1024 * 1024
 const safeName = (name: string) => name.normalize('NFKD').replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/-+/g, '-').slice(-100)
 const extension = (name: string) => name.split('.').pop()?.toLowerCase() ?? ''
 
@@ -51,19 +53,19 @@ export const releaseMixService = {
   },
 
   async signedUrl(storagePath: string) {
-    const { data, error } = await requireSupabase().storage.from(SONG_AUDIO_BUCKET).createSignedUrl(storagePath, 60 * 60)
+    const { data, error } = await requireSupabase().storage.from(RELEASE_MIX_AUDIO_BUCKET).createSignedUrl(storagePath, 60 * 60)
     if (error) throw error
     return data.signedUrl
   },
 
   async uploadVersion(context: MemberContext, releaseIdentifier: string, file: File, displayName: string, description: string, durationSeconds: number | null) {
-    validateAudioFile(file)
+    validateAudioFile(file, { maxBytes: MAX_MIX_AUDIO_BYTES, sizeMessage: 'Mix files must be 250 MB or smaller.' })
     const client = requireSupabase()
     const workspaceId = context.membership.workspace_id
     const releaseId = await resolveReleaseId(workspaceId, releaseIdentifier)
     const versionId = crypto.randomUUID()
     const storagePath = `${workspaceId}/releases/${releaseId}/${versionId}-${safeName(file.name)}`
-    const { error: uploadError } = await client.storage.from(SONG_AUDIO_BUCKET).upload(storagePath, file, { contentType: file.type || undefined, upsert: false })
+    const { error: uploadError } = await client.storage.from(RELEASE_MIX_AUDIO_BUCKET).upload(storagePath, file, { contentType: file.type || undefined, upsert: false })
     if (uploadError) throw uploadError
     try {
       const userId = await currentUserId()
@@ -85,7 +87,7 @@ export const releaseMixService = {
       if (error) throw error
       return data as ReleaseMixVersionRecord
     } catch (error) {
-      await client.storage.from(SONG_AUDIO_BUCKET).remove([storagePath])
+      await client.storage.from(RELEASE_MIX_AUDIO_BUCKET).remove([storagePath])
       throw error
     }
   },
