@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { Check, ChevronDown, ChevronUp, Clock3, Layers3, Pencil, Plus, RotateCcw, Trash2, X } from 'lucide-react'
 import { releaseMixService } from './lib/services'
 import type {
@@ -49,6 +49,7 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
   const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const initializedExpansionForRelease = useRef<string | null>(null)
 
   const load = useCallback(async () => {
     if (!context) return
@@ -58,6 +59,10 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
       setVersions(result.versions)
       setNotes(nextNotes)
       setSelectedVersionId(current => result.versions.some(version => version.id === current) ? current : result.versions[0]?.id ?? '')
+      if (initializedExpansionForRelease.current !== releaseId) {
+        initializedExpansionForRelease.current = releaseId
+        setExpanded(result.versions.length > 0)
+      }
       setError('')
     } catch (reason) {
       setError(errorMessage(reason, 'Mix Notes could not load.'))
