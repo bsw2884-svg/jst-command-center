@@ -80,6 +80,44 @@ export type AudioClipRecord = {
   updated_at: string
 }
 
+export type MixApprovalStatus = 'In Review' | 'Approved'
+export type MixNoteStatus = 'Open' | 'Resolved'
+export type MixNoteCategory = 'Overall' | 'Vocals' | 'Drums' | 'Bass' | 'Guitars' | 'FX' | 'Other'
+
+export type ReleaseMixVersionRecord = {
+  id: string
+  workspace_id: string
+  release_id: string
+  storage_path: string
+  display_name: string
+  description: string
+  mime_type: string
+  size_bytes: number
+  duration_seconds: number | null
+  approval_status: MixApprovalStatus
+  uploaded_by: string
+  uploaded_by_member_id: string | null
+  uploaded_by_name: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type ReleaseMixNoteRecord = {
+  id: string
+  workspace_id: string
+  release_id: string
+  mix_version_id: string
+  timestamp_seconds: number
+  category: MixNoteCategory
+  note: string
+  status: MixNoteStatus
+  author_user_id: string
+  author_member_id: string | null
+  author_name: string | null
+  created_at: string
+  updated_at: string
+}
+
 export type Workspace = {
   id: string; name: string; created_by: string; created_at: string; updated_at: string
 }
