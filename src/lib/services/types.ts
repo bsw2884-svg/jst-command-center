@@ -88,11 +88,11 @@ export type ReleaseMixVersionRecord = {
   id: string
   workspace_id: string
   release_id: string
-  storage_path: string
+  storage_path: string | null
   display_name: string
   description: string
-  mime_type: string
-  size_bytes: number
+  mime_type: string | null
+  size_bytes: number | null
   duration_seconds: number | null
   approval_status: MixApprovalStatus
   uploaded_by: string
@@ -107,7 +107,7 @@ export type ReleaseMixNoteRecord = {
   workspace_id: string
   release_id: string
   mix_version_id: string
-  timestamp_seconds: number
+  timestamp_seconds: number | null
   category: MixNoteCategory
   note: string
   status: MixNoteStatus

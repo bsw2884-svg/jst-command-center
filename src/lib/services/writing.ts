@@ -12,9 +12,9 @@ const safeName = (name: string) => name.normalize('NFKD').replace(/[^a-zA-Z0-9._
 const ext = (name: string) => name.split('.').pop()?.toLowerCase() ?? ''
 const allowedExtensions = new Set(['mp3', 'wav', 'm4a', 'aac', 'webm', 'ogg'])
 
-export function validateAudioFile(file: File, options: { maxBytes?: number; sizeMessage?: string } = {}) {
+export function validateAudioFile(file: File) {
   if (!allowedExtensions.has(ext(file.name))) throw new Error('Choose an MP3, WAV, M4A, AAC, WebM, or Ogg audio file.')
-  if (file.size > (options.maxBytes ?? MAX_AUDIO_BYTES)) throw new Error(options.sizeMessage ?? 'Audio clips must be 50 MB or smaller.')
+  if (file.size > MAX_AUDIO_BYTES) throw new Error('Audio clips must be 50 MB or smaller.')
 }
 
 const attribution = (context: MemberContext) => ({

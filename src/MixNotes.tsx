@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
-import { Check, ChevronDown, ChevronUp, Clock3, FileAudio, Pencil, Plus, RotateCcw, Trash2, X } from 'lucide-react'
-import { AUDIO_ACCEPT, releaseMixService } from './lib/services'
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
+import { Check, ChevronDown, ChevronUp, Clock3, Layers3, Pencil, Plus, RotateCcw, Trash2, X } from 'lucide-react'
+import { releaseMixService } from './lib/services'
 import type {
   MemberContext,
   MixNoteCategory,
@@ -11,34 +11,26 @@ import type {
 
 const categories: MixNoteCategory[] = ['Overall', 'Vocals', 'Drums', 'Bass', 'Guitars', 'FX', 'Other']
 const filters: Array<'All' | MixNoteStatus> = ['All', 'Open', 'Resolved']
+
 const errorMessage = (reason: unknown, fallback: string) => {
   if (reason instanceof Error) return reason.message
   if (reason && typeof reason === 'object' && 'message' in reason && typeof reason.message === 'string') return reason.message
   return fallback
 }
 
-const secondsLabel = (value: number) => {
+const timestampLabel = (value: number | null) => {
+  if (value === null) return ''
   const seconds = Math.max(0, Math.round(Number(value) || 0))
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
 }
 
-const parseTimestamp = (value: string) => {
-  const parts = value.trim().split(':').map(Number)
-  if (parts.some(Number.isNaN)) return 0
-  return parts.length === 1 ? Math.max(0, parts[0]) : Math.max(0, parts.at(-2)! * 60 + parts.at(-1)!)
+const parseTimestamp = (value: string): number | null => {
+  const trimmed = value.trim()
+  if (!trimmed) return null
+  if (!/^\d+(?::[0-5]\d)?$/.test(trimmed)) throw new Error('Enter the optional timestamp as seconds or M:SS.')
+  const parts = trimmed.split(':').map(Number)
+  return parts.length === 1 ? parts[0] : parts[0] * 60 + parts[1]
 }
-
-const fileDuration = (file: File) => new Promise<number | null>(resolve => {
-  const url = URL.createObjectURL(file)
-  const audio = new Audio()
-  const done = (duration: number | null) => {
-    URL.revokeObjectURL(url)
-    resolve(duration)
-  }
-  audio.onloadedmetadata = () => done(Number.isFinite(audio.duration) ? audio.duration : null)
-  audio.onerror = () => done(null)
-  audio.src = url
-})
 
 type NoteDraft = {
   id?: string
@@ -52,13 +44,11 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
   const [versions, setVersions] = useState<ReleaseMixVersionRecord[]>([])
   const [notes, setNotes] = useState<ReleaseMixNoteRecord[]>([])
   const [selectedVersionId, setSelectedVersionId] = useState('')
-  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({})
   const [filter, setFilter] = useState<'All' | MixNoteStatus>('All')
   const [versionForm, setVersionForm] = useState(false)
   const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const playerRef = useRef<HTMLAudioElement>(null)
 
   const load = useCallback(async () => {
     if (!context) return
@@ -68,8 +58,6 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
       setVersions(result.versions)
       setNotes(nextNotes)
       setSelectedVersionId(current => result.versions.some(version => version.id === current) ? current : result.versions[0]?.id ?? '')
-      const entries = await Promise.all(result.versions.map(async version => [version.id, await releaseMixService.signedUrl(version.storage_path)] as const))
-      setSignedUrls(Object.fromEntries(entries))
       setError('')
     } catch (reason) {
       setError(errorMessage(reason, 'Mix Notes could not load.'))
@@ -107,14 +95,10 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
     setExpanded(true)
     setNoteDraft(note ? {
       id: note.id,
-      timestamp: secondsLabel(note.timestamp_seconds),
+      timestamp: timestampLabel(note.timestamp_seconds),
       category: note.category,
       note: note.note,
-    } : {
-      timestamp: secondsLabel(playerRef.current?.currentTime ?? 0),
-      category: 'Overall',
-      note: '',
-    })
+    } : { timestamp: '', category: 'Overall', note: '' })
   }
 
   const saveNote = async (event: FormEvent) => {
@@ -132,24 +116,12 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
     })
   }
 
-  const uploadVersion = async (event: FormEvent<HTMLFormElement>) => {
+  const createVersion = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!context) return
     const form = new FormData(event.currentTarget)
-    const file = form.get('audio')
-    if (!(file instanceof File) || !file.size) {
-      setError('Choose an audio file for this mix version.')
-      return
-    }
     await run(async () => {
-      await releaseMixService.uploadVersion(
-        context,
-        releaseId,
-        file,
-        String(form.get('name') ?? ''),
-        String(form.get('description') ?? ''),
-        await fileDuration(file),
-      )
+      await releaseMixService.createVersion(context, releaseId, String(form.get('name') ?? ''), String(form.get('description') ?? ''))
       setVersionForm(false)
     })
   }
@@ -161,13 +133,6 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
     await run(() => releaseMixService.updateVersion(context, selectedVersion.id, { approval_status: approving ? 'Approved' : 'In Review' }))
   }
 
-  const seekTo = (seconds: number) => {
-    const player = playerRef.current
-    if (!player) return
-    player.currentTime = seconds
-    void player.play()
-  }
-
   if (!context) return null
 
   return <section className="mixNotesShell" aria-label={`Mix Notes for ${releaseName}`}>
@@ -176,26 +141,25 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
         <span className="eyebrow">MIX NOTES</span>
         {selectedVersion?.approval_status === 'Approved'
           ? <strong className="mixApproved"><Check /> MIX APPROVED</strong>
-          : <strong>{selectedVersion ? `${openCount} Open · ${resolvedCount} Resolved` : 'No mix versions yet'}</strong>}
+          : <strong>{selectedVersion ? `${selectedVersion.display_name.toUpperCase()} · ${openCount} OPEN${openCount === 1 ? ' NOTE' : ' NOTES'}` : 'No mix versions yet'}</strong>}
       </div>
       <div className="mixSummaryActions">
         <button className="ghost" onClick={() => { setExpanded(true); setVersionForm(true) }}><Plus /> Add Mix Version</button>
-        <button className="ghost" disabled={!selectedVersion} onClick={() => beginNote()}><Clock3 /> Add Note</button>
+        <button className="ghost" disabled={!selectedVersion} onClick={() => beginNote()}><Plus /> Add Note</button>
         <button className="ghost" onClick={() => setExpanded(value => !value)}>{expanded ? <ChevronUp /> : <ChevronDown />} {expanded ? 'Hide' : 'View'} All Notes</button>
       </div>
     </div>
 
     {expanded && <div className="mixNotesPanel">
       {error && <p className="mixError" role="alert">{error}</p>}
-      {versionForm && <form className="mixVersionForm" onSubmit={uploadVersion}>
-        <div className="mixFormHeading"><div><span className="eyebrow">NEW MIX VERSION</span><h3>Upload a new pass</h3></div><button type="button" className="icon" onClick={() => setVersionForm(false)} aria-label="Close upload form"><X /></button></div>
-        <label>Version name<input name="name" required placeholder="Mix 03 — Vocal Up" /></label>
-        <label>Description<textarea name="description" placeholder="What changed in this version?" /></label>
-        <label>Audio file<input name="audio" type="file" accept={AUDIO_ACCEPT} required /><small>MP3, WAV, M4A, AAC, WebM, or Ogg · up to 250 MB</small></label>
-        <button className="primary" disabled={busy}><FileAudio /> {busy ? 'Uploading…' : 'Upload Mix'}</button>
+      {versionForm && <form className="mixVersionForm" onSubmit={createVersion}>
+        <div className="mixFormHeading"><div><span className="eyebrow">NEW MIX VERSION</span><h3>Add a new pass</h3></div><button type="button" className="icon" onClick={() => setVersionForm(false)} aria-label="Close version form"><X /></button></div>
+        <label>Version name<input name="name" required placeholder="Mix 3" /></label>
+        <label>Description / what changed<textarea name="description" placeholder="Fixed the ride bell and tom flam…" /></label>
+        <button className="primary" disabled={busy}><Layers3 /> {busy ? 'Creating…' : 'Create Mix Version'}</button>
       </form>}
 
-      {!versions.length && !versionForm && !error && <div className="mixEmpty"><FileAudio /><h3>No mix versions yet</h3><p>Upload the first mix to start timestamped feedback.</p><button className="primary" onClick={() => setVersionForm(true)}><Plus /> Add Mix Version</button></div>}
+      {!versions.length && !versionForm && !error && <div className="mixEmpty"><Layers3 /><h3>No mix versions yet</h3><p>Create the first mix version to start tracking feedback.</p><button className="primary" onClick={() => setVersionForm(true)}><Plus /> Add Mix Version</button></div>}
 
       {!!versions.length && <>
         <div className="mixVersionTabs" role="tablist" aria-label="Mix versions">
@@ -203,34 +167,26 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
             const versionNotes = notes.filter(note => note.mix_version_id === version.id)
             const versionOpen = versionNotes.filter(note => note.status === 'Open').length
             return <button key={version.id} className={version.id === selectedVersionId ? 'active' : ''} onClick={() => { setSelectedVersionId(version.id); setNoteDraft(null) }}>
-              <b>{version.display_name}</b><span>{version.approval_status}{versionOpen ? ` · ${versionOpen} open` : ''}</span>
+              <b>{version.display_name}</b><span>{version.approval_status === 'Approved' ? 'Approved' : `${versionOpen} open note${versionOpen === 1 ? '' : 's'}`}</span>
             </button>
           })}
         </div>
 
         {selectedVersion && <div className="mixVersionDetail">
           <div className="mixVersionHeader">
-            <div><span className="eyebrow">CURRENT MIX</span><h3>{selectedVersion.display_name}</h3><p>{selectedVersion.description || 'No version notes.'}</p><small>Uploaded by {selectedVersion.uploaded_by_name || 'JST member'} · {new Date(selectedVersion.created_at).toLocaleDateString()}</small></div>
+            <div><span className="eyebrow">CURRENT MIX</span><h3>{selectedVersion.display_name}</h3><p>{selectedVersion.description || 'No version description yet.'}</p><small>Created by {selectedVersion.uploaded_by_name || 'JST member'} · {new Date(selectedVersion.created_at).toLocaleDateString()}</small></div>
             <button className={selectedVersion.approval_status === 'Approved' ? 'ghost' : 'primary'} onClick={toggleApproval} disabled={busy}>
               {selectedVersion.approval_status === 'Approved' ? <><RotateCcw /> Reopen Review</> : <><Check /> Approve Mix</>}
             </button>
           </div>
-          {signedUrls[selectedVersion.id] && <audio
-            ref={playerRef}
-            className="mixPlayer"
-            src={signedUrls[selectedVersion.id]}
-            controls
-            preload="metadata"
-            onPlay={event => document.querySelectorAll('audio').forEach(audio => { if (audio !== event.currentTarget) audio.pause() })}
-          />}
 
           <div className="mixNotesToolbar">
             <div className="mixFilters" aria-label="Mix note filters">{filters.map(value => <button key={value} className={filter === value ? 'active' : ''} onClick={() => setFilter(value)}>{value}</button>)}</div>
-            <button className="primary" onClick={() => beginNote()}><Clock3 /> Add Note at {secondsLabel(playerRef.current?.currentTime ?? 0)}</button>
+            <button className="primary" onClick={() => beginNote()}><Plus /> Add Note</button>
           </div>
 
           {noteDraft && <form className="mixNoteForm" onSubmit={saveNote}>
-            <label>Timestamp<input value={noteDraft.timestamp} onChange={event => setNoteDraft({ ...noteDraft, timestamp: event.target.value })} placeholder="0:00" /></label>
+            <label>Timestamp (optional)<input value={noteDraft.timestamp} onChange={event => setNoteDraft({ ...noteDraft, timestamp: event.target.value })} placeholder="1:17" inputMode="numeric" /></label>
             <label>Category<select value={noteDraft.category} onChange={event => setNoteDraft({ ...noteDraft, category: event.target.value as MixNoteCategory })}>{categories.map(category => <option key={category}>{category}</option>)}</select></label>
             <label className="grow">Note<textarea required value={noteDraft.note} onChange={event => setNoteDraft({ ...noteDraft, note: event.target.value })} placeholder="What should change?" /></label>
             <div className="mixNoteFormActions"><button type="button" className="ghost" onClick={() => setNoteDraft(null)}>Cancel</button><button className="primary" disabled={busy}>{noteDraft.id ? 'Save Note' : 'Add Note'}</button></div>
@@ -238,9 +194,9 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
 
           <div className="mixNoteList">
             {!visibleNotes.length && <p className="mixEmptyMessage">{filter === 'All' ? 'No notes on this mix yet.' : `No ${filter.toLowerCase()} notes on this mix.`}</p>}
-            {visibleNotes.map(note => <article className={`mixNote ${note.status.toLowerCase()}`} key={note.id}>
-              <button className="mixTimestamp" onClick={() => seekTo(note.timestamp_seconds)}>{secondsLabel(note.timestamp_seconds)}</button>
-              <div className="mixNoteCopy"><div><span className="mixCategory">{note.category}</span><span className={`mixStatus ${note.status.toLowerCase()}`}>{note.status}</span></div><p>{note.note}</p><small>{note.author_name || 'JST member'} · {new Date(note.created_at).toLocaleString()}</small></div>
+            {visibleNotes.map(note => <article className={`mixNote ${note.status.toLowerCase()} ${note.timestamp_seconds === null ? 'noTimestamp' : ''}`} key={note.id}>
+              {note.timestamp_seconds !== null && <span className="mixTimestamp"><Clock3 /> {timestampLabel(note.timestamp_seconds)}</span>}
+              <div className="mixNoteCopy"><div><span className="mixCategory">{note.category}</span><span className={`mixStatus ${note.status.toLowerCase()}`}>{note.status}</span></div><p>{note.note}</p><small>{note.author_name || 'JST member'} · Created {new Date(note.created_at).toLocaleString()}{note.updated_at !== note.created_at && ` · Updated ${new Date(note.updated_at).toLocaleString()}`}</small></div>
               <div className="mixNoteActions">
                 <button className="icon" onClick={() => beginNote(note)} aria-label="Edit note"><Pencil /></button>
                 <button className="icon" onClick={() => context && run(() => releaseMixService.updateNote(context, note.id, { status: note.status === 'Open' ? 'Resolved' : 'Open' }))} aria-label={note.status === 'Open' ? 'Resolve note' : 'Reopen note'}>{note.status === 'Open' ? <Check /> : <RotateCcw />}</button>
