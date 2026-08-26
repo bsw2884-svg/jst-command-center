@@ -1,0 +1,59 @@
+.notificationCenter{position:relative;display:block;flex:0 0 auto;min-width:0;letter-spacing:normal}
+.cloudBar .notificationBell{position:relative;display:grid;width:32px;min-width:32px;height:32px;padding:0;place-items:center;border:1px solid #65514d;background:#453735;color:#f8efe4}
+.cloudBar .notificationBell:hover{background:#594541}
+.cloudBar .notificationBell svg{width:17px;height:17px;color:var(--jst-shell)}
+.notificationBadge{position:absolute;top:-5px;right:-6px;display:grid!important;min-width:18px;height:18px;padding:0 4px!important;place-items:center;border:2px solid #352c2b;border-radius:12px;background:var(--jst-coral);color:#fff;font:900 9px/1 Arial,sans-serif;letter-spacing:0}
+.notificationPanel{position:fixed;z-index:120;top:43px;right:12px;width:min(420px,calc(100vw - 24px));max-width:100%;min-width:0;max-height:min(76dvh,720px);box-sizing:border-box;display:flex;flex-direction:column;padding:16px;border:1px solid #71534f;border-radius:3px;background:#2b2423;color:#f8efe4;box-shadow:10px 12px 0 #19141380,0 24px 70px #0009;text-align:left;letter-spacing:normal}
+.notificationHandle{display:none}
+.notificationPanel header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding-bottom:12px;border-bottom:1px solid #5e4844}
+.notificationPanel header span{display:block;padding:0;color:var(--jst-seafoam);font:900 8px/1 Arial,sans-serif;letter-spacing:.16em}
+.notificationPanel h2{margin:4px 0 0;font:900 29px/.95 'Barlow Condensed',Arial,sans-serif;letter-spacing:.02em}
+.cloudBar .notificationPanel .icon{display:grid;width:38px;min-width:38px;height:38px;padding:0;place-items:center;border:1px solid #68514d;background:#382d2b}
+.notificationTools{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0}
+.notificationTools>div{display:flex;gap:4px}
+.cloudBar .notificationTools button{min-height:34px;padding:7px 10px;border:1px solid #624d49;background:#352b29;color:#c9bdb6;font-size:9px}
+.cloudBar .notificationTools button.active{border-color:#e5aaa9;background:var(--jst-shell);color:#332624}
+.cloudBar .notificationTools .markAllRead{margin-left:auto;color:#f1d9d7}
+.notificationTools .markAllRead svg{width:14px;height:14px}
+.notificationTools button:disabled{opacity:.42}
+.notificationError{margin:0 0 10px;padding:10px;border-left:3px solid var(--jst-danger);background:#49292c;color:#ffd1cd;font:700 11px/1.45 Arial,sans-serif}
+.notificationList{min-height:0;overflow-y:auto;overscroll-behavior:contain;display:grid;gap:6px;padding-right:2px}
+.notificationList article{position:relative;display:grid;border:1px solid #5a4743;background:#221c1b}
+.notificationList article.unread{border-left:4px solid var(--jst-shell);background:#382c2b}
+.cloudBar .notificationOpen{width:100%;min-width:0;display:grid;grid-template-columns:36px minmax(0,1fr) 8px;align-items:start;gap:10px;padding:12px;border:0;background:transparent;color:inherit;text-align:left;letter-spacing:normal}
+.cloudBar .notificationOpen:hover{background:#ffffff08}
+.notificationTypeIcon{display:grid!important;width:36px;height:36px;padding:0!important;place-items:center;border:1px solid #6c5550;background:#201a19;transform:rotate(-2deg)}
+.notificationTypeIcon svg{width:17px;height:17px;color:var(--jst-seafoam)}
+.notificationCopy{min-width:0;display:grid!important;gap:4px!important;padding:0!important;overflow:visible!important;white-space:normal!important}
+.notificationCopy b{font:900 16px/1 'Barlow Condensed',Arial,sans-serif;color:#fff4e8}
+.notificationCopy>span{display:block!important;max-width:none!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;transform:none!important;color:#d0c4bd;font:600 11px/1.45 Arial,sans-serif;white-space:normal!important;overflow-wrap:anywhere}
+.notificationCopy small{color:#9f918a;font:700 9px/1.3 Arial,sans-serif}
+.notificationOpen>i{width:7px;height:7px;margin-top:5px;border-radius:50%;background:var(--jst-shell);box-shadow:0 0 0 3px #e8a5aa22}
+.cloudBar .notificationRead{justify-self:end;margin:0 8px 8px;padding:5px 7px;border:1px dashed #6a504c;background:transparent;color:#d9ccc4;font-size:8px}
+.notificationRead svg{width:12px;height:12px}
+.notificationEmpty{min-height:150px;display:grid;place-items:center;align-content:center;gap:10px;color:#aa9d96;text-align:center}
+.notificationEmpty svg{width:30px;height:30px;color:var(--jst-seafoam)}
+.notificationEmpty b{font:900 18px 'Barlow Condensed',Arial,sans-serif}
+
+@media(max-width:600px){
+  .cloudSession .cloudBar{grid-template-columns:minmax(0,1fr) auto auto auto auto}
+  .notificationPanel{top:auto;right:max(8px,env(safe-area-inset-right));bottom:calc(72px + env(safe-area-inset-bottom));left:max(8px,env(safe-area-inset-left));width:auto;max-width:none;max-height:min(72dvh,650px);padding:8px 14px 16px;border-radius:18px 18px 6px 6px;box-shadow:0 -18px 70px #000b}
+  .notificationHandle{display:block;width:42px;height:4px;margin:2px auto 12px;border-radius:4px;background:#735d58}
+  .notificationPanel h2{font-size:27px}
+  .notificationTools{align-items:stretch;flex-wrap:wrap}
+  .notificationTools>div{flex:1}
+  .cloudBar .notificationTools>div button{flex:1;justify-content:center}
+  .cloudBar .notificationTools .markAllRead{min-height:36px}
+  .cloudBar .notificationOpen{grid-template-columns:34px minmax(0,1fr) 8px;padding:11px 9px}
+  .notificationTypeIcon{width:34px;height:34px}
+}
+
+.is-mobile .cloudSession .cloudBar{grid-template-columns:minmax(0,1fr) auto auto auto auto!important}
+.is-mobile .cloudBar .notificationBell{display:grid!important;width:32px!important;min-width:32px!important;height:32px!important;padding:0!important;place-items:center!important}
+
+@media(max-width:375px){
+  .cloudBar,.is-mobile .cloudBar{gap:3px!important;padding-inline:max(5px,env(safe-area-inset-left)) max(5px,env(safe-area-inset-right))!important}
+  .cloudBar .memberIdentity,.is-mobile .cloudBar .memberIdentity{padding-inline:5px!important;font-size:8px!important}
+  .cloudBar .cloudSyncStatus,.is-mobile .cloudBar .cloudSyncStatus{padding-inline:4px!important;font-size:7px!important}
+  .cloudBar .switchMemberAction,.is-mobile .cloudBar .switchMemberAction{padding-inline:4px!important;font-size:7px!important}
+}

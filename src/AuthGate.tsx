@@ -5,7 +5,9 @@ import jstLogo from './Assets/Branding/jst-logo.png.png'
 import { JST_BAND_MEMBERS, type JstBandMemberId } from './lib/bandMembers'
 import { isSupabaseConfigured } from './lib/supabase'
 import { authService, workspaceService, type MemberContext } from './lib/services'
+import NotificationCenter from './NotificationCenter'
 import './auth.css'
+import './notifications.css'
 
 const messageOf = (cause: unknown, fallback: string) =>
   cause instanceof Error ? cause.message
@@ -87,6 +89,7 @@ export default function AuthGate({ children }: { children: ReactNode }) {
     <div className="cloudBar">
       <span className="memberIdentity" data-mobile-label={context.member.display_name}><Cloud/><span>{context.member.display_name} · {context.membership.workspace.name}</span></span>
       <em className={`cloudSyncStatus ${syncStatus.phase}`} data-mobile-label={compactSyncStatus}><span>{syncStatus.message}</span></em>
+      <NotificationCenter context={context}/>
       <button className="switchMemberAction" onClick={signOut}><LogOut/>Switch Member</button>
       <button className="mobileMoreAction" aria-label="More pages and settings" onClick={()=>window.dispatchEvent(new Event('jst-mobile-more'))}><MoreHorizontal/></button>
     </div>

@@ -42,6 +42,7 @@ function WritingCloudPage({ context, onCatalogChanged }: { context: MemberContex
 
   useEffect(() => { void load(); const channel = writingService.subscribe(workspaceId, () => void load()); return () => { void channel.unsubscribe() } }, [load, workspaceId])
   useEffect(() => { const open = () => setCreating(true); window.addEventListener('jst-new-writing-song', open); return () => window.removeEventListener('jst-new-writing-song', open) }, [])
+  useEffect(() => { const open = (event: Event) => setSelectedId((event as CustomEvent<string>).detail); window.addEventListener('jst-open-writing-song', open); return () => window.removeEventListener('jst-open-writing-song', open) }, [])
 
   const selected = songs.find(song => song.id === selectedId) ?? null
   const filteredSongs = stageFilter === 'All' ? songs : songs.filter(song => song.stage === stageFilter)
@@ -97,7 +98,7 @@ function WritingDetail({ context, song, clips, onBack, onChanged, onEdit, onDele
   const move = async () => {
     if (!confirm(`Move “${song.title}” into the Songs catalog? Its Writing history and audio clips will stay here.`)) return
     setMoving(true); setError('')
-    try { await writingService.moveToCatalog(song.id); await onChanged(); onCatalogChanged() }
+    try { await writingService.moveToCatalog(context, song.id); await onChanged(); onCatalogChanged() }
     catch (cause) { setError(messageOf(cause)) }
     finally { setMoving(false) }
   }
@@ -245,7 +246,7 @@ function RecordIdea({ context, songId, clips, registerPreview, pauseExistingAudi
     try {
       const mime = blob.type || 'audio/webm'
       const file = new File([blob], `${name.trim() || `Idea ${nextIdea}`}.${recordingExtension(mime)}`, { type: mime })
-      await writingService.upload(context, songId, file, name, notes, duration)
+      await writingService.upload(context, songId, file, name, notes, duration, 'record_idea')
       clearPreview(); await onSaved(); onClose()
     } catch (cause) { setError(messageOf(cause)); setPhase('preview') }
   }
