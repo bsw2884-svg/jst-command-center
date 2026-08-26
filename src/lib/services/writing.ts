@@ -73,7 +73,7 @@ export const writingService = {
     return data.signedUrl
   },
 
-  async upload(context: MemberContext, writingSongId: string, file: File, displayName: string, notes: string, durationSeconds: number | null) {
+  async upload(context: MemberContext, writingSongId: string, file: File, displayName: string, notes: string, durationSeconds: number | null, sourceType: 'upload' | 'record_idea' = 'upload') {
     validateAudioFile(file)
     const client = requireSupabase()
     const clipId = crypto.randomUUID()
@@ -99,6 +99,7 @@ export const writingService = {
       uploaded_by: user.data.user.id,
       uploaded_by_member_id: context.member.id,
       uploaded_by_name: context.member.display_name,
+      source_type: sourceType,
     }).select().single()
     if (error) {
       await client.storage.from(SONG_AUDIO_BUCKET).remove([storagePath])
@@ -122,8 +123,12 @@ export const writingService = {
     if (error) throw error
   },
 
-  async moveToCatalog(id: string) {
-    const { data, error } = await requireSupabase().rpc('move_writing_song_to_catalog', { target_writing_song_id: id })
+  async moveToCatalog(context: MemberContext, id: string) {
+    const client = requireSupabase()
+    const { error: attributionError } = await client.from('writing_songs').update(attribution(context))
+      .eq('workspace_id', context.membership.workspace_id).eq('id', id)
+    if (attributionError) throw attributionError
+    const { data, error } = await client.rpc('move_writing_song_to_catalog', { target_writing_song_id: id })
     if (error) throw error
     return data as SongRecord
   },

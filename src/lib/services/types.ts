@@ -78,6 +78,36 @@ export type AudioClipRecord = {
   uploaded_by_name: string | null
   created_at: string
   updated_at: string
+  source_type: 'upload' | 'record_idea'
+}
+
+export type NotificationType =
+  | 'writing_clip_added'
+  | 'record_idea_added'
+  | 'mix_note_added'
+  | 'mix_version_added'
+  | 'task_created'
+  | 'task_assigned'
+  | 'task_completed'
+  | 'writing_moved_to_songs'
+  | 'release_stage_changed'
+
+export type NotificationRecord = {
+  id: string
+  workspace_id: string
+  recipient_member_id: string
+  actor_user_id: string | null
+  actor_member_id: string | null
+  actor_name: string
+  type: NotificationType
+  title: string
+  message: string
+  entity_type: 'writing_song' | 'release' | 'task' | 'song'
+  entity_id: string
+  related_id: string | null
+  is_read: boolean
+  created_at: string
+  read_at: string | null
 }
 
 export type MixApprovalStatus = 'In Review' | 'Approved'
