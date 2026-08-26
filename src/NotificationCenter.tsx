@@ -84,7 +84,7 @@ export default function NotificationCenter({ context }: { context: MemberContext
     setOpen(false)
     window.dispatchEvent(new CustomEvent('jst-navigate', { detail: page }))
     if (notification.entity_type === 'writing_song') {
-      window.setTimeout(() => window.dispatchEvent(new CustomEvent('jst-open-writing-song', { detail: notification.entity_id })), 0)
+      window.setTimeout(() => window.dispatchEvent(new CustomEvent('jst-open-writing-song', { detail: notification.entity_id })), 150)
     }
   }
 
