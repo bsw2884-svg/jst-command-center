@@ -1,6 +1,8 @@
 import {useRef,useState} from 'react'
 import {AlertTriangle,CheckCircle2,Cloud,Download,FileJson,RotateCcw,ShieldCheck,Upload,X} from 'lucide-react'
 import type {CloudController,MigrationResult,OperationalData} from './lib/cloudData'
+import PushNotificationSettings from './PushNotificationSettings'
+import {useJstMemberContext} from './AuthGate'
 
 export const BACKUP_SCHEMA_VERSION=1
 export const APP_DATA_KEY='jst-command-center-v1'
@@ -16,6 +18,7 @@ export const validateBackup=(value:any):Backup=>{if(!value||typeof value!=='obje
 export const downloadBackup=(data:OperationalData)=>{const backup=makeBackup(data),day=backup.exportedAt.slice(0,10),blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`JST-Command-Center-Backup-${day}.json`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);return backup.exportedAt}
 
 export default function DataBackup({data,cloud,onRestore,onReset}:{data:OperationalData;cloud:CloudController;onRestore:(data:OperationalData)=>void;onReset:()=>void}){
+ const memberContext=useJstMemberContext()
  const input=useRef<HTMLInputElement>(null)
  const [last,setLast]=useState(()=>localStorage.getItem(LAST_BACKUP_KEY)||''),[pending,setPending]=useState<Backup|null>(null),[error,setError]=useState(''),[success,setSuccess]=useState(''),[resetOpen,setResetOpen]=useState(false),[resetText,setResetText]=useState(''),[migrationOpen,setMigrationOpen]=useState(false),[migrationConfirmed,setMigrationConfirmed]=useState(false),[migrationResult,setMigrationResult]=useState<MigrationResult|null>(null)
  const exportNow=()=>{const at=downloadBackup(data);localStorage.setItem(LAST_BACKUP_KEY,at);setLast(at);setSuccess('BACKUP EXPORTED');setError('')}
@@ -25,6 +28,7 @@ export default function DataBackup({data,cloud,onRestore,onReset}:{data:Operatio
  const migrate=async()=>{if(!last||!migrationConfirmed)return;setError('');setSuccess('');try{const result=await cloud.migrate(data);setMigrationResult(result);setMigrationOpen(false);setSuccess('CLOUD MIGRATION COMPLETE · COUNTS AND SAMPLE FIELDS VERIFIED')}catch(cause){setError(cause instanceof Error?cause.message:'Cloud migration failed. Local data remains untouched.')}}
  return <div className="dataPage">
   <section className="dataHero"><ShieldCheck/><div><span className="eyebrow">DATA PROTECTION &amp; CLOUD SYNC</span><h2>DATA &amp; BACKUP</h2><p>Your local snapshot remains available while shared JST records sync through Supabase.</p></div></section>
+  {memberContext&&<PushNotificationSettings context={memberContext}/>}
   {success&&<div className="dataNotice success"><CheckCircle2/>{success}</div>}{error&&<div className="dataNotice error"><AlertTriangle/><div><b>DATA ERROR</b><span>{error}</span></div><button className="icon" onClick={()=>setError('')}><X/></button></div>}
   <section className="cloudDataPanel record"><div className="cloudDataHead"><Cloud/><div><span className="eyebrow">SHARED WORKSPACE</span><h3>Cloud Data</h3></div><b className={`syncState ${cloud.phase}`}>{cloud.message}</b></div><dl><div><dt>WORKSPACE</dt><dd>JumpStart Tomorrow</dd></div><div><dt>LAST SUCCESSFUL SYNC</dt><dd>{dateLabel(cloud.lastSync)}</dd></div><div><dt>PENDING OFFLINE CHANGES</dt><dd>{cloud.pendingCount}</dd></div><div><dt>MIGRATION</dt><dd>{cloud.migrationComplete?'Cloud migration complete':'Local data awaiting migration'}</dd></div></dl>{!cloud.migrationComplete&&<><p className="migrationWarning"><AlertTriangle/><b>Your local data will remain untouched until cloud migration is verified.</b></p><button className="primary" onClick={()=>setMigrationOpen(true)}><Cloud/> Migrate Local Data to Cloud</button></>}{cloud.migrationComplete&&<button className="ghost" onClick={()=>void cloud.reload()} disabled={cloud.phase==='syncing'}>Refresh Cloud Data</button>}
   {migrationResult&&<div className="migrationResults"><b>LAST MIGRATION RESULT</b>{Object.entries(migrationResult.sections).map(([name,result])=><span key={name}>{name}: {result.inserted} inserted · {result.updated} updated · {result.skipped} skipped · {result.failed} failed</span>)}</div>}</section>
