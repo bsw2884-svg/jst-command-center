@@ -1,5 +1,6 @@
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import { requireSupabase } from './core'
+import { normalizeMixUrl } from '../mixLink'
 import type {
   MemberContext,
   MixApprovalStatus,
@@ -47,7 +48,8 @@ export const releaseMixService = {
     return (data ?? []) as ReleaseMixNoteRecord[]
   },
 
-  async createVersion(context: MemberContext, releaseIdentifier: string, displayName: string, description: string) {
+  async createVersion(context: MemberContext, releaseIdentifier: string, displayName: string, description: string, mixUrl?: string | null) {
+    const mix_url = normalizeMixUrl(mixUrl)
     const client = requireSupabase()
     const workspaceId = context.membership.workspace_id
     const releaseId = await resolveReleaseId(workspaceId, releaseIdentifier)
@@ -58,6 +60,7 @@ export const releaseMixService = {
       storage_path: null,
       display_name: displayName.trim(),
       description: description.trim(),
+      mix_url,
       mime_type: null,
       size_bytes: null,
       duration_seconds: null,
@@ -70,8 +73,9 @@ export const releaseMixService = {
     return data as ReleaseMixVersionRecord
   },
 
-  async updateVersion(context: MemberContext, id: string, patch: { display_name?: string; description?: string; approval_status?: MixApprovalStatus }) {
-    const { data, error } = await requireSupabase().from('release_mix_versions').update(patch)
+  async updateVersion(context: MemberContext, id: string, patch: { display_name?: string; description?: string; mix_url?: string | null; approval_status?: MixApprovalStatus }) {
+    const validatedPatch = patch.mix_url === undefined ? patch : { ...patch, mix_url: normalizeMixUrl(patch.mix_url) }
+    const { data, error } = await requireSupabase().from('release_mix_versions').update(validatedPatch)
       .eq('workspace_id', context.membership.workspace_id).eq('id', id).select().single()
     if (error) throw error
     return data as ReleaseMixVersionRecord
