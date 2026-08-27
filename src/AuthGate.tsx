@@ -6,6 +6,7 @@ import { JST_BAND_MEMBERS, type JstBandMemberId } from './lib/bandMembers'
 import { isSupabaseConfigured } from './lib/supabase'
 import { authService, workspaceService, type MemberContext } from './lib/services'
 import NotificationCenter from './NotificationCenter'
+import {disablePushNotifications, syncPushSubscriptionIdentity} from './lib/pushNotifications'
 import './auth.css'
 import './notifications.css'
 
@@ -65,12 +66,17 @@ export default function AuthGate({ children }: { children: ReactNode }) {
   }, [context])
 
   useEffect(() => {
+    if (context) void syncPushSubscriptionIdentity(context).catch(cause => console.warn('Push identity sync was deferred.', cause))
+  }, [context])
+
+  useEffect(() => {
     const update = (event: Event) => setSyncStatus((event as CustomEvent<{ phase: string; message: string }>).detail)
     window.addEventListener('jst-sync-status', update)
     return () => window.removeEventListener('jst-sync-status', update)
   }, [])
 
   const signOut = async () => {
+    if (context) await disablePushNotifications(context).catch(cause => console.warn('Push cleanup will be completed when the expired endpoint is processed.', cause))
     workspaceService.clearSelectedBandMember()
     const { error: signOutError } = await authService.signOut()
     if (signOutError) setError(signOutError.message)

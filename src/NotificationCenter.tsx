@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Bell, Check, CheckCheck, CircleDot, Disc3, FileAudio, ListTodo, Mic, Music2, PenLine, SlidersHorizontal, X } from 'lucide-react'
 import { notificationService, type MemberContext, type NotificationRecord, type NotificationType } from './lib/services'
+import { destinationForNotification, navigateToNotificationDestination } from './lib/notificationNavigation'
 
 const iconFor: Record<NotificationType, typeof Bell> = {
   writing_clip_added: FileAudio,
@@ -78,14 +79,8 @@ export default function NotificationCenter({ context }: { context: MemberContext
 
   const navigate = async (notification: NotificationRecord) => {
     await markRead(notification)
-    const page = notification.entity_type === 'writing_song' ? 'Writing'
-      : notification.entity_type === 'release' ? 'Releases'
-        : notification.entity_type === 'task' ? 'Tasks' : 'Songs'
     setOpen(false)
-    window.dispatchEvent(new CustomEvent('jst-navigate', { detail: page }))
-    if (notification.entity_type === 'writing_song') {
-      window.setTimeout(() => window.dispatchEvent(new CustomEvent('jst-open-writing-song', { detail: notification.entity_id })), 150)
-    }
+    navigateToNotificationDestination(destinationForNotification(notification))
   }
 
   const markAll = async () => {
