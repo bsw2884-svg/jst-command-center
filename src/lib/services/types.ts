@@ -121,6 +121,7 @@ export type ReleaseMixVersionRecord = {
   storage_path: string | null
   display_name: string
   description: string
+  mix_url: string | null
   mime_type: string | null
   size_bytes: number | null
   duration_seconds: number | null

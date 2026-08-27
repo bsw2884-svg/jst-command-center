@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
-import { Check, ChevronDown, ChevronUp, Clock3, Layers3, Pencil, Plus, RotateCcw, Trash2, X } from 'lucide-react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'react'
+import { Check, ChevronDown, ChevronUp, Clock3, ExternalLink, Layers3, Pencil, Plus, RotateCcw, Trash2, X } from 'lucide-react'
 import { releaseMixService } from './lib/services'
+import { mixLinkDetails, normalizeMixUrl } from './lib/mixLink'
 import type {
   MemberContext,
   MixNoteCategory,
@@ -39,13 +40,17 @@ type NoteDraft = {
   note: string
 }
 
+type VersionDraft = { id?: string; name: string; description: string; mixUrl: string }
+
 export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: MemberContext | null; releaseId: string; releaseName: string }) {
   const [expanded, setExpanded] = useState(false)
   const [versions, setVersions] = useState<ReleaseMixVersionRecord[]>([])
   const [notes, setNotes] = useState<ReleaseMixNoteRecord[]>([])
   const [selectedVersionId, setSelectedVersionId] = useState('')
   const [filter, setFilter] = useState<'All' | MixNoteStatus>('All')
-  const [versionForm, setVersionForm] = useState(false)
+  const [versionForm, setVersionForm] = useState<VersionDraft | null>(null)
+  const [mixLinkError, setMixLinkError] = useState('')
+  const mixLinkErrorId = useId()
   const [noteDraft, setNoteDraft] = useState<NoteDraft | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -77,6 +82,7 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
   }, [context, load])
 
   const selectedVersion = versions.find(version => version.id === selectedVersionId) ?? null
+  const selectedMixLink = mixLinkDetails(selectedVersion?.mix_url)
   const selectedNotes = useMemo(() => notes.filter(note => note.mix_version_id === selectedVersionId), [notes, selectedVersionId])
   const openCount = selectedNotes.filter(note => note.status === 'Open').length
   const resolvedCount = selectedNotes.filter(note => note.status === 'Resolved').length
@@ -121,13 +127,31 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
     })
   }
 
-  const createVersion = async (event: FormEvent<HTMLFormElement>) => {
+  const beginVersion = (version?: ReleaseMixVersionRecord) => {
+    setExpanded(true)
+    setMixLinkError('')
+    setVersionForm(version
+      ? { id: version.id, name: version.display_name, description: version.description, mixUrl: version.mix_url ?? '' }
+      : { name: '', description: '', mixUrl: '' })
+  }
+
+  const saveVersion = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (!context) return
-    const form = new FormData(event.currentTarget)
+    if (!context || !versionForm) return
+    let mixUrl: string | null
+    try {
+      mixUrl = normalizeMixUrl(versionForm.mixUrl)
+      setMixLinkError('')
+    } catch (reason) {
+      setMixLinkError(errorMessage(reason, 'Enter a valid http:// or https:// URL.'))
+      return
+    }
     await run(async () => {
-      await releaseMixService.createVersion(context, releaseId, String(form.get('name') ?? ''), String(form.get('description') ?? ''))
-      setVersionForm(false)
+      const saved = versionForm.id
+        ? await releaseMixService.updateVersion(context, versionForm.id, { display_name: versionForm.name.trim(), description: versionForm.description.trim(), mix_url: mixUrl })
+        : await releaseMixService.createVersion(context, releaseId, versionForm.name, versionForm.description, mixUrl)
+      setSelectedVersionId(saved.id)
+      setVersionForm(null)
     })
   }
 
@@ -149,7 +173,7 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
           : <strong>{selectedVersion ? `${selectedVersion.display_name.toUpperCase()} · ${openCount} OPEN${openCount === 1 ? ' NOTE' : ' NOTES'}` : 'No mix versions yet'}</strong>}
       </div>
       <div className="mixSummaryActions">
-        <button className="ghost" onClick={() => { setExpanded(true); setVersionForm(true) }}><Plus /> Add Mix Version</button>
+        <button className="ghost" onClick={() => beginVersion()}><Plus /> Add Mix Version</button>
         <button className="ghost" disabled={!selectedVersion} onClick={() => beginNote()}><Plus /> Add Note</button>
         <button className="ghost" onClick={() => setExpanded(value => !value)}>{expanded ? <ChevronUp /> : <ChevronDown />} {expanded ? 'Hide' : 'View'} All Notes</button>
       </div>
@@ -157,14 +181,15 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
 
     {expanded && <div className="mixNotesPanel">
       {error && <p className="mixError" role="alert">{error}</p>}
-      {versionForm && <form className="mixVersionForm" onSubmit={createVersion}>
-        <div className="mixFormHeading"><div><span className="eyebrow">NEW MIX VERSION</span><h3>Add a new pass</h3></div><button type="button" className="icon" onClick={() => setVersionForm(false)} aria-label="Close version form"><X /></button></div>
-        <label>Version name<input name="name" required placeholder="Mix 3" /></label>
-        <label>Description / what changed<textarea name="description" placeholder="Fixed the ride bell and tom flam…" /></label>
-        <button className="primary" disabled={busy}><Layers3 /> {busy ? 'Creating…' : 'Create Mix Version'}</button>
+      {versionForm && <form className="mixVersionForm" onSubmit={saveVersion}>
+        <div className="mixFormHeading"><div><span className="eyebrow">{versionForm.id ? 'EDIT MIX VERSION' : 'NEW MIX VERSION'}</span><h3>{versionForm.id ? 'Update this pass' : 'Add a new pass'}</h3></div><button type="button" className="icon" onClick={() => setVersionForm(null)} disabled={busy} aria-label="Close version form"><X /></button></div>
+        <label>Version name<input name="name" required placeholder="Mix 3" value={versionForm.name} onChange={event => setVersionForm({ ...versionForm, name: event.target.value })} /></label>
+        <label>Description / what changed<textarea name="description" placeholder="Fixed the ride bell and tom flam…" value={versionForm.description} onChange={event => setVersionForm({ ...versionForm, description: event.target.value })} /></label>
+        <label>Mix Link (optional)<input name="mix_url" inputMode="url" autoCapitalize="none" spellCheck={false} placeholder="https://…" value={versionForm.mixUrl} onChange={event => { setVersionForm({ ...versionForm, mixUrl: event.target.value }); setMixLinkError('') }} aria-invalid={Boolean(mixLinkError)} aria-describedby={mixLinkError ? mixLinkErrorId : undefined} />{mixLinkError && <span id={mixLinkErrorId} className="mixLinkError" role="alert">{mixLinkError}</span>}</label>
+        <button className="primary" disabled={busy}><Layers3 /> {busy ? 'Saving…' : versionForm.id ? 'Save Mix Version' : 'Create Mix Version'}</button>
       </form>}
 
-      {!versions.length && !versionForm && !error && <div className="mixEmpty"><Layers3 /><h3>No mix versions yet</h3><p>Create the first mix version to start tracking feedback.</p><button className="primary" onClick={() => setVersionForm(true)}><Plus /> Add Mix Version</button></div>}
+      {!versions.length && !versionForm && !error && <div className="mixEmpty"><Layers3 /><h3>No mix versions yet</h3><p>Create the first mix version to start tracking feedback.</p><button className="primary" onClick={() => beginVersion()}><Plus /> Add Mix Version</button></div>}
 
       {!!versions.length && <>
         <div className="mixVersionTabs" role="tablist" aria-label="Mix versions">
@@ -180,10 +205,13 @@ export function ReleaseMixNotes({ context, releaseId, releaseName }: { context: 
         {selectedVersion && <div className="mixVersionDetail">
           <div className="mixVersionHeader">
             <div><span className="eyebrow">CURRENT MIX</span><h3>{selectedVersion.display_name}</h3><p>{selectedVersion.description || 'No version description yet.'}</p><small>Created by {selectedVersion.uploaded_by_name || 'JST member'} · {new Date(selectedVersion.created_at).toLocaleDateString()}</small></div>
+            <div className="mixVersionActions"><button className="ghost" onClick={() => beginVersion(selectedVersion)} disabled={busy}><Pencil /> Edit Mix Version</button>
             <button className={selectedVersion.approval_status === 'Approved' ? 'ghost' : 'primary'} onClick={toggleApproval} disabled={busy}>
               {selectedVersion.approval_status === 'Approved' ? <><RotateCcw /> Reopen Review</> : <><Check /> Approve Mix</>}
-            </button>
+            </button></div>
           </div>
+
+          {selectedMixLink && <div className="mixExternalLink"><a className="primary mixOpenLink" href={selectedMixLink.url} target="_blank" rel="noopener noreferrer"><ExternalLink /> Open Mix</a><small>{selectedMixLink.hostname}</small></div>}
 
           <div className="mixNotesToolbar">
             <div className="mixFilters" aria-label="Mix note filters">{filters.map(value => <button key={value} className={filter === value ? 'active' : ''} onClick={() => setFilter(value)}>{value}</button>)}</div>
