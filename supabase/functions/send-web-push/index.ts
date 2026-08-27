@@ -54,7 +54,7 @@ const errorMessage = (cause: unknown) => cause instanceof Error ? cause.message 
 Deno.serve(async request => {
   try {
     if (request.method !== 'POST') return new Response('Method not allowed', { status: 405 })
-    const webhookSecret = required('PUSH_WEBHOOK_SECRET')
+    const webhookSecret = required('JST_PUSH_WEBHOOK_SECRET')
     if (request.headers.get('x-jst-push-secret') !== webhookSecret) {
       return new Response('Unauthorized', { status: 401 })
     }

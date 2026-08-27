@@ -39,7 +39,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 Then configure the Edge Function secrets in one command:
 
 ```sh
-supabase secrets set VAPID_PUBLIC_KEY="<public key>" VAPID_PRIVATE_KEY="<private key>" VAPID_SUBJECT="https://jumpstarttomorrow.com/" PUSH_WEBHOOK_SECRET="<random webhook secret>" --project-ref qtmswcombdjsjprgbsyp
+supabase secrets set VAPID_PUBLIC_KEY="<public key>" VAPID_PRIVATE_KEY="<private key>" VAPID_SUBJECT="https://jumpstarttomorrow.com/" JST_PUSH_WEBHOOK_SECRET="<random webhook secret>" --project-ref qtmswcombdjsjprgbsyp
 ```
 
 `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are supplied to deployed Supabase Edge Functions by Supabase. Do not add the service-role key to Vercel.
@@ -66,7 +66,7 @@ This is a manual dashboard step because the webhook secret must not be committed
 6. Use HTTP method `POST`.
 7. Set the URL to `https://qtmswcombdjsjprgbsyp.supabase.co/functions/v1/send-web-push`.
 8. Add header `Content-Type: application/json`.
-9. Add header `x-jst-push-secret: <the same PUSH_WEBHOOK_SECRET>`.
+9. Add header `x-jst-push-secret: <the same JST_PUSH_WEBHOOK_SECRET>`.
 10. Save and enable the webhook.
 
 The webhook runs asynchronously after the notification row is created, so the original app mutation is not blocked by push delivery.

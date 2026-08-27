@@ -42,7 +42,8 @@ with check (
   and selected_member_id = public.current_notification_member(workspace_id)
   and exists (
     select 1 from public.band_members member
-    where member.id = selected_member_id and member.workspace_id = workspace_id
+    where member.id = push_subscriptions.selected_member_id
+      and member.workspace_id = push_subscriptions.workspace_id
   )
 );
 
