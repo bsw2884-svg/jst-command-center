@@ -4,6 +4,10 @@ import type { SetlistData } from './lib/setlists'
 
 export function setlistError(error: unknown) {
   const message = error && typeof error === 'object' && 'message' in error ? String(error.message) : 'Setlist could not load.'
+  const detail = error && typeof error === 'object' && 'details' in error ? String(error.details ?? '') : ''
+  if (/SETLIST_REVISION_CONFLICT|changed on another device/i.test(`${message} ${detail}`)) {
+    return 'This setlist changed on another device. Reload it before saving.'
+  }
   return /schema cache|does not exist|could not find .*show_setlist/i.test(message)
     ? 'Setlists are not available yet. Apply the show_setlists migration, then retry.' : message
 }

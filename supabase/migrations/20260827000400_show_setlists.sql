@@ -83,7 +83,8 @@ begin
   if p_expected_revision is null or p_expected_revision<0 then raise exception 'A saved revision is required.'; end if;
   select * into saved from public.show_setlists where workspace_id=target_workspace and show_id=p_show_id for update;
   if coalesce(saved.revision,0)<>p_expected_revision then
-    raise exception 'This setlist changed on another device. Reload it before saving.' using errcode='40001';
+    raise exception using errcode='P0001', message='SETLIST_REVISION_CONFLICT',
+      detail='This setlist changed on another device. Reload it before saving.';
   end if;
   if not coalesce(p_allow_duplicates,false) and exists (
     select 1 from jsonb_array_elements(p_items) x group by (x->>'song_id')::uuid having count(*)>1
